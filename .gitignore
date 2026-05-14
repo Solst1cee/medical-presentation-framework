@@ -1,0 +1,35 @@
+# Medical Presentation Framework — .gitignore
+
+# Development backups and superseded drafts. See CLAUDE.md (top section)
+# for what this folder is and why it's excluded.
+not-used/
+
+# Backup files anywhere in the tree (safe-file-operations.md convention:
+# {file}.backup-YYYYMMDD-HHMM.{ext})
+*.backup-*
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.vscode/
+.idea/
+
+# Python build artefacts (in case scripts get added later)
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Live working presentation projects — keep the framework repo clean of
+# patient-adjacent or in-progress decks. Remove this section if you want
+# example projects published alongside the framework.
+# (Uncomment the next lines to apply.)
+# Departments/
+# Rotations/
+# Cases/
+
+AGENTS.md
