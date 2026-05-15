@@ -9,7 +9,7 @@ A rolling log of presentations built with this framework. Each entry captures on
 
 **Purpose**
 
-- The skill files in `skills/` state each rule and convention without backstory (by design). This file is where the backstory lives — *why* a given building block, content module, or safety rule exists in the first place.
+- The skill files in `framework/` state each rule and convention without backstory (by design). This file is where the backstory lives — *why* a given building block, content module, or safety rule exists in the first place.
 - Each new presentation built with the framework should add a new case section. Over time the log becomes a worked-example library that a contributor can read to understand both the framework and the kinds of problems it was shaped to handle.
 - Read the existing cases once at the start of a new presentation to remember patterns that have already been validated.
 
@@ -46,13 +46,13 @@ Append a new section under "Cases", using the Case 1 entry as a template:
 #### What to fix next time — feedback received
 
 **1. More clinical presentation depth in each MSK syndrome.** The deck had risk factors, imaging, microbiology, treatment — but the **patient encounter** layer was thin. The professor wanted the bedside view: history (duration, pain quality, exposures), examination (e.g., for NTM tenosynovitis: nodular swelling along flexor sheath, reproducible Tinel's sign, *absence* of erythema in chronic disease, firm/doughy mass vs the soft fluctuant feel of acute pyogenic infection), and cohort prevalence numbers per symptom (e.g., "constitutional symptoms in only 40% of a Thai tertiary-centre cohort, fever 36%"). Use both **textbook** (clinical features the editors emphasize) and **research data** (cohort symptom prevalence).
-**Codified as:** `skills/content-modules/clinical-depth.md`
+**Codified as:** `framework/content-modules/clinical-depth.md`
 
 **2. Comparison with TB across all axes — not just one slide.** The TB-vs-NTM contrast existed on a single septic-arthritis slide. The professor wanted comparison across **risk factors, symptoms, examination, investigation profile, and treatment** — distributed throughout the deck or on a dedicated comparison page early on. Pattern: a dedicated comparison slide immediately after introducing the topic, per-syndrome inline comparison columns in tables, or a two-colour highlight throughout the deck. Applies whenever the topic has a clinical mimic (NTM↔TB, gout↔pseudogout, RA↔PsA, etc.).
-**Codified as:** `skills/content-modules/disease-comparison.md`
+**Codified as:** `framework/content-modules/disease-comparison.md`
 
 **3. Local (Thai) guideline / drug availability.** International guidelines (ATS/IDSA, ACR) were cited but practical availability in Thailand was not. Every drug-related slide should pair the international regimen with a "Available in Thailand?" footnote covering: Royal College of Physicians of Thailand / specialty-society guidance, hospital pharmacy stock, NHSO (สปสช.) coverage, cost (private pay vs Universal Coverage vs Social Security), reference labs for specialised tests (e.g., anti-IFN-γ ELISA available only at select tertiary referral centres in Bangkok), and common substitutions (e.g., rifampin in place of rifabutin, with caveats).
-**Codified as:** `skills/content-modules/local-guideline.md`
+**Codified as:** `framework/content-modules/local-guideline.md`
 
 #### Critical lesson — backup before destructive operations (8 May 2026)
 
@@ -64,7 +64,7 @@ This was a process failure, not a content failure. The three rules broken:
 2. **Don't delegate destructive work to a subagent without making the backup yourself** — subagents can misreport success.
 3. **Don't trust subagent "success" reports** without independent verification (file size, slide count, image count, content spot-check).
 
-**Codified as:** `skills/safe-file-operations.md`
+**Codified as:** `framework/safe-file-operations.md`
 
 #### Process improvements that came out of this project
 
@@ -79,8 +79,8 @@ This was a process failure, not a content failure. The three rules broken:
 
 ### Case 2 — (next presentation goes here)
 
-> Template — copy the Case 1 structure: **Outcome → What worked → What to fix → Critical lessons → Process improvements**. Each "What to fix" item should end with a `**Codified as:**` line if it generalised into a new rule in `skills/`. If the lesson is project-specific, omit the codification line.
+> Template — copy the Case 1 structure: **Outcome → What worked → What to fix → Critical lessons → Process improvements**. Each "What to fix" item should end with a `**Codified as:**` line if it generalised into a new rule in `framework/`. If the lesson is project-specific, omit the codification line.
 
 ---
 
-*This file grows over time. The framework files in `skills/` stay tight and prescriptive; the messy reality of each project lives here.*
+*This file grows over time. The framework files in `framework/` stay tight and prescriptive; the messy reality of each project lives here.*

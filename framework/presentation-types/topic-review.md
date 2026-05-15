@@ -25,12 +25,13 @@ This skill is a **thin wrapper**: it describes what's specific to topic reviews 
 
 Load these by `Read` when you reach the matching workflow phase:
 
-- For PPTX mechanics, theme, slide layouts → `skills/building-blocks/deck-build.md`
-- For references and PMID verification → `skills/building-blocks/references.md`
-- For open-access figure sourcing → `skills/building-blocks/images.md`
-- For speaker notes format → `skills/building-blocks/speaker-notes.md`
-- For visual QA → `skills/building-blocks/visual-qa.md`
-- For mock Q&A → `skills/building-blocks/mock-qa.md`
+- For PPTX mechanics, theme, slide layouts → `framework/building-blocks/deck-build.md`
+- For auto-fetching textbook chapters, papers, and guideline PDFs into `Sources/` → `framework/building-blocks/sources-fetch.md`
+- For references and PMID verification → `framework/building-blocks/references.md`
+- For open-access figure sourcing → `framework/building-blocks/images.md`
+- For speaker notes format → `framework/building-blocks/speaker-notes.md`
+- For visual QA → `framework/building-blocks/visual-qa.md`
+- For mock Q&A → `framework/building-blocks/mock-qa.md`
 
 ## Content modules to consider
 
@@ -38,15 +39,15 @@ Each content module has its own trigger — load only when the trigger fires:
 
 | Module | Trigger |
 |---|---|
-| `skills/content-modules/clinical-depth.md` | Every disease-syndrome slide. Apply during Phase 3 outline drafting. |
-| `skills/content-modules/disease-comparison.md` | Topic has a recognised clinical mimic (e.g., NTM ↔ TB, gout ↔ CPPD, RA ↔ PsA, SLE ↔ drug-induced lupus, DRESS ↔ SJS). Apply during Phase 3 outline drafting — propose a dedicated comparison slide early in the deck, with per-syndrome inline comparison columns where relevant. If unsure whether a candidate mimic is significant enough to warrant the comparison structure, confirm with the user during Phase 1 outline-proposal. |
-| `skills/content-modules/evidence-grading.md` | Every slide that states a clinical recommendation from a named guideline — most often F (Treatment / management / prevention), and central in Type 4 management-focused and Type 5 emergency reviews. Apply during Phase 3 outline drafting: each recommendation in the outline carries its grade (GRADE / ACC-AHA Class + LOE / USPSTF) and the guideline year, on the same line. Flag conflicts between guidelines (or between an international guideline and the local one) explicitly rather than picking one silently. |
-| `skills/content-modules/local-guideline.md` | Thai-speaking audience. Apply during Phase 2 (local-context research) and Phase 3 (Local Context slide near treatment). |
-| `skills/content-modules/paper-summary.md` | **On user request only** — when the user asks for details on a specific paper (e.g., *"summarise Garrahy 2021"*, *"landmark card for DAPA-HF"*, *"chip for that trial"*). Output goes inline in the outline's `## Build aids — not for slides` section alongside Sources and Figure summaries. Pick the tier from the user's phrasing — chip (Tier 1), compact landmark card (Tier 2), or full summary (Tier 3) — and label the card with its tier. Don't auto-summarise every reference. |
+| `framework/content-modules/clinical-depth.md` | Every disease-syndrome slide. Apply during Phase 3 outline drafting. |
+| `framework/content-modules/disease-comparison.md` | Topic has a recognised clinical mimic (e.g., NTM ↔ TB, gout ↔ CPPD, RA ↔ PsA, SLE ↔ drug-induced lupus, DRESS ↔ SJS). Apply during Phase 3 outline drafting — propose a dedicated comparison slide early in the deck, with per-syndrome inline comparison columns where relevant. If unsure whether a candidate mimic is significant enough to warrant the comparison structure, confirm with the user during Phase 1 outline-proposal. |
+| `framework/content-modules/evidence-grading.md` | Every slide that states a clinical recommendation from a named guideline — most often F (Treatment / management / prevention), and central in Type 4 management-focused and Type 5 emergency reviews. Apply during Phase 3 outline drafting: each recommendation in the outline carries its grade (GRADE / ACC-AHA Class + LOE / USPSTF) and the guideline year, on the same line. Flag conflicts between guidelines (or between an international guideline and the local one) explicitly rather than picking one silently. |
+| `framework/content-modules/local-guideline.md` | Thai-speaking audience. Apply during Phase 2 (local-context research) and Phase 3 (Local Context slide near treatment). |
+| `framework/content-modules/paper-summary.md` | **On user request only** — when the user asks for details on a specific paper (e.g., *"summarise Garrahy 2021"*, *"landmark card for DAPA-HF"*, *"chip for that trial"*). Output goes inline in the outline's `## Build aids — not for slides` section alongside Sources and Figure summaries. Pick the tier from the user's phrasing — chip (Tier 1), compact landmark card (Tier 2), or full summary (Tier 3) — and label the card with its tier. Don't auto-summarise every reference. |
 
 ## Discipline (always applies)
 
-- Before any rebuild or post-presentation update → `skills/safe-file-operations.md`
+- Before any rebuild or post-presentation update → `framework/safe-file-operations.md`
 
 ---
 
@@ -89,8 +90,9 @@ Once outline is approved (and the section weighting from Phase 3 has been agreed
 
 Then:
 
+0. **Offer to auto-fetch any missing sources** via `sources-fetch.md` before manual reading begins. List what the kickoff named (textbook chapter, guideline, landmark papers), check what's already in `Sources/`, and offer to fetch the rest by browser download (if the user has campus / VPN access) or local-library extraction (if the user has a digital textbook collection indexed in `library-index.md`). Skip if the user says they'll handle it themselves or everything is already in `Sources/`. The fetched files land in `Sources/`; their citations land in `Sources/_acquisition_log.md`, which step 4 below reads when populating the sources summary table.
 1. Read the user-supplied PDFs in `Sources/` — start with the primary textbook chapter, then secondary, then guidelines. Don't infer details from training knowledge.
-2. For Heavy sections, find and verify primary-literature PMIDs (key cohort papers, landmark trials). Web-search each PMID before adding to the master reference list — see `references.md`.
+2. For Heavy sections, find and verify primary-literature PMIDs (key cohort papers, landmark trials). Web-search each PMID before adding to the master reference list — see `references.md`. Any newly-identified paper can be queued for `sources-fetch.md` instead of being downloaded by hand.
 3. Build a Vancouver-style master reference list at the **top** of `Documents/{Topic} outline.md`.
 4. **Populate the sources summary table at the bottom of the outline**, under a `## Build aids — not for slides` section header. This is a build aid for the outline only — **it never gets copied into a slide**. Format and column definitions live in `references.md`. Its purpose: let the user sync papers they don't yet have on hand, and distinguish what came from `Sources/` vs. what Claude pulled from web search. The same `## Build aids — not for slides` section also hosts the figure summary table (Phase 3; see `images.md`).
 
@@ -470,7 +472,7 @@ The skeleton below demonstrates how the metadata header, master reference list, 
 
 ### Paper summaries
 
-> Added on user request only. Format and content per `skills/content-modules/paper-summary.md`. Example card shown below — in a real outline, you'd have one card per landmark paper the user asked about.
+> Added on user request only. Format and content per `framework/content-modules/paper-summary.md`. Example card shown below — in a real outline, you'd have one card per landmark paper the user asked about.
 
 #### Garrahy 2021 — Hypertonic saline RCT
 
@@ -570,24 +572,11 @@ After the talk, faculty typically identify gaps. To integrate them:
 
 ## Safety reminders
 
-The full safety discipline lives in `safe-file-operations.md`; read it before any rebuild that touches a "Final" or "important" file. Backstory and context for these rules live in `skills/retrospective.md`.
+The full safety discipline lives in `safe-file-operations.md`; read it before any rebuild that touches a "Final" or "important" file. Backstory and context for these rules live in `framework/retrospective.md`.
 
 ---
 
 ## Quick-start checklist
 
 - [ ] Decide rotation, topic, audience, slide count, duration, primary sources
-- [ ] Create folder structure (`Sources/`, `Documents/`, `Deck/`, `Build_archive/`)
-- [ ] Download textbook PDFs + key primary papers into `Sources/`
-- [ ] Propose topic-appropriate outline structure → get user approval
-- [ ] Research → sources summary table populated → slide-by-slide outline drafted → user confirms
-- [ ] Build deck with topic-named filenames → image placeholders → visual QA
-- [ ] (Optional) speaker notes + mock Q&A
-- [ ] Present
-- [ ] Capture faculty feedback in `Faculty_feedback.md`
-- [ ] Integrate gaps using safe-file-ops discipline (backup → modify a copy → verify → swap)
-- [ ] Archive: `README.md` updated, outline synced, mock questions updated
-
----
-
-*Topic-review thin wrapper. Mechanics live in the building blocks; content guidance in the content modules; safety discipline in `safe-file-operations.md`. Update a building block → next topic review automatically uses the new version.*
+- [ ] Create folder structure (`Sources/`, `Document

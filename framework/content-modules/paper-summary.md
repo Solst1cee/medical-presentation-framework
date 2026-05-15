@@ -23,7 +23,7 @@ Use cases:
 - **Slide review** — checking that an on-slide claim matches the paper's actual findings.
 - **Faculty Q&A prep** — anticipating *"what did that paper actually show?"* questions.
 
-This is **not** a full critical-appraisal exercise. For a full critique (full risk-of-bias assessment, applicability analysis, GRADE rating), use the journal-club workflow — see `skills/presentation-types/journal-club.md`.
+This is **not** a full critical-appraisal exercise. For a full critique (full risk-of-bias assessment, applicability analysis, GRADE rating), use the journal-club workflow — see `framework/presentation-types/journal-club.md`.
 
 ---
 

@@ -19,7 +19,7 @@ A deck that cites international guidelines without addressing Thai-side reality 
 - What the **Royal College of Physicians of Thailand** or the relevant Thai specialty society recommends
 - Realistic substitutions when the recommended drug isn't on the hospital formulary
 
-The result of skipping these: a deck with technically correct international content but limited bedside utility. See `skills/retrospective.md` for the project history that drove this module.
+The result of skipping these: a deck with technically correct international content but limited bedside utility. See `framework/retrospective.md` for the project history that drove this module.
 
 ---
 

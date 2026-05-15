@@ -181,7 +181,7 @@ If a destructive operation has already occurred and you don't have your own back
    - Source-of-truth documents (`{Topic} outline.md`, etc.) that can rebuild content
    - Any cached or temporary files
 4. **Propose recovery options with their tradeoffs**, and let the user choose
-5. **Capture the failure as a permanent lesson** in the skills folder
+5. **Capture the failure as a permanent lesson** in the framework folder
 
 ---
 

@@ -1,34 +1,54 @@
 # CLAUDE.md — Medical Presentation Framework
 
-A modular framework for medical academic presentations: topic reviews, journal clubs, case discussions (with M&M and operative-technique slots reserved for later formats). One set of reusable building blocks — deck-build, references, images, speaker-notes, visual-qa, mock-qa — that any presentation type can call.
+A modular framework for medical academic presentations: topic reviews, journal clubs, case discussions (with M&M and operative-technique slots reserved for later formats). One set of reusable building blocks — deck-build, sources-fetch, references, images, speaker-notes, visual-qa, mock-qa — that any presentation type can call.
 
-Originally authored by an internal-medicine resident in Thailand. The default conventions (English slides, Thai-narrative speaker notes with English medical terms, a home-institution theme palette, Thai NLEM/NHSO local-context content module) reflect that setting. If you're adopting the framework elsewhere, the conventions in Section 4 and the theme constants in `skills/building-blocks/deck-build.md` are designed to be the points you swap.
+Originally authored by an internal-medicine resident in Thailand. The default conventions (English slides, Thai-narrative speaker notes with English medical terms, a home-institution theme palette, Thai NLEM/NHSO local-context content module) reflect that setting. If you're adopting the framework elsewhere, the conventions in Section 4 and the theme constants in `framework/building-blocks/deck-build.md` are designed to be the points you swap.
 
-**Where to start:** this file describes how the framework is laid out and how to use it. `skills/retrospective.md` is optional reading — it captures the lessons that shaped the defaults.
+**Where to start:** this file describes how the framework is laid out and how to use it. `framework/retrospective.md` is optional reading — it captures the lessons that shaped the defaults.
 
-**Ignore `not-used/`.** It holds old backups and superseded drafts from framework development, not current framework files. Don't read, grep, or research inside `not-used/` when working on the framework — current canonical files live in `skills/` and at the project root. (It is also excluded from version control via `.gitignore`.)
+---
+
+## 0. First-time setup for adopters
+
+This framework is designed to be **opened as a Cowork project**. Most of the workflow (topic-review, journal-club, case-discussion) loads from inside this folder via Read path — Claude reads `CLAUDE.md`, sees the framework, and follows the layered framework files. **Open the framework folder as your Cowork project before asking for a topic review, journal club, or case discussion.**
+
+A small number of skills are also packaged as `.skill` bundles at the project root, for cases where direct triggering from outside the framework folder makes sense.
+
+### What's bundled, what's not — and why
+
+- **Bundled** (`.skill` at project root): **sources-fetch** only. Useful standalone — adopters often want to fetch a chapter or paper into a folder ad-hoc, without first opening a presentation project. The skill is self-contained (no internal references to other framework files), so it triggers cleanly from anywhere on the machine once installed.
+- **Not bundled** (folder-only): **topic-review, journal-club, case-discussion**. These are *thin wrappers* that load building blocks via relative paths like `framework/building-blocks/deck-build.md`. Those paths only resolve when the working directory is the framework folder. Bundling them would force a choice between (a) shipping copies of every building block inside each `.skill` (defeating the layered architecture's update-once principle) or (b) shipping broken paths. Folder-only is the honest answer.
+
+### Claude — on the first session in a new environment, do this check
+
+1. Look at the current `available_skills` list (in the system reminder).
+2. For each `.skill` bundle present at the project root, check whether a matching skill name is already installed.
+3. If any are missing, list them to the user and offer to install via `present_files` so they get a one-click install card. Do not install silently — let the user choose.
+
+After install, the user may need to restart Cowork for the new skill to appear in `available_skills`.
 
 ---
 
 ## 1. Architecture — four layers
 
 ```
-DISCIPLINE   skills/safe-file-operations.md            (always applies)
+DISCIPLINE   framework/safe-file-operations.md            (always applies)
     ↑
-PRESENTATION TYPES   skills/presentation-types/
+PRESENTATION TYPES   framework/presentation-types/
                        ├── topic-review.md
                        ├── journal-club.md
                        └── case-discussion.md
     ↑ thin wrappers; reference building blocks by Read path
-BUILDING BLOCKS   skills/building-blocks/
+BUILDING BLOCKS   framework/building-blocks/
                        ├── deck-build.md      (theme + layouts + python-pptx + unpack/repack)
+                       ├── sources-fetch.md   (browser download via VPN + local-library extraction → Sources/)
                        ├── references.md      (Vancouver + PMID verification)
                        ├── images.md          (PMC open-access + license + caption)
                        ├── speaker-notes.md   (audience-language narrative + English medical terms)
                        ├── visual-qa.md       (PDF render + PNG checks)
                        └── mock-qa.md         (anticipated Q&A, in/beyond deck)
     ↑ optionally enriched by
-CONTENT MODULES   skills/content-modules/
+CONTENT MODULES   framework/content-modules/
                        ├── clinical-depth.md       (bedside Hx + exam + cohort %)
                        ├── disease-comparison.md   (mimic-comparison framework)
                        ├── evidence-grading.md     (GRADE / ACC-AHA / USPSTF on recommendations)
@@ -46,9 +66,9 @@ Trigger phrases the user might say, and which skill loads:
 
 | User says | Skill that triggers |
 |---|---|
-| "topic review", "rotation presentation", "prepare slides for [topic]" | `skills/presentation-types/topic-review.md` |
-| "journal club", "critique this paper", "PICO" | `skills/presentation-types/journal-club.md` |
-| "case discussion", "case conference", "present a case" | `skills/presentation-types/case-discussion.md` |
+| "topic review", "rotation presentation", "prepare slides for [topic]" | `framework/presentation-types/topic-review.md` |
+| "journal club", "critique this paper", "PICO" | `framework/presentation-types/journal-club.md` |
+| "case discussion", "case conference", "present a case" | `framework/presentation-types/case-discussion.md` |
 
 Each presentation-type skill has its own workflow phases. They reference the building blocks by `Read` path — when Claude reaches a phase, it loads the relevant building block at that moment. This keeps each presentation-type wrapper thin (~200 lines) and the mechanics in one canonical place.
 
@@ -56,13 +76,13 @@ Each presentation-type skill has its own workflow phases. They reference the bui
 
 ## 3. Safety rules — read before any rebuild
 
-Three rules apply universally and are codified in `skills/safe-file-operations.md`:
+Three rules apply universally and are codified in `framework/safe-file-operations.md`:
 
 1. **NEVER overwrite a file the user calls "Final", "finalized", "presented", or "important".** Write the new version to a different filename. Let the user verify, then rename.
 2. **Make your OWN backup before modifying any important file**, using `{file}.backup-YYYYMMDD-HHMM.{ext}`. Don't delegate the backup step.
 3. **Don't trust subagent "success" reports without independent verification.** Check file size, slide count, image count, content of 3–5 representative slides.
 
-Read `skills/safe-file-operations.md` before any operation that modifies a finalized artifact.
+Read `framework/safe-file-operations.md` before any operation that modifies a finalized artifact.
 
 ---
 
@@ -71,12 +91,12 @@ Read `skills/safe-file-operations.md` before any operation that modifies a final
 These are the defaults. Override them per project as needed.
 
 - **Slides:** English by default. Switch to another language only if the user explicitly requests it for a particular file.
-- **Speaker notes:** audience-language narrative with English medical terms preserved exactly as taught (`Mycobacterium marinum`, `Tinel's sign`, `ATS/IDSA`). For a Thai-speaking audience, this means Thai prose with English clinical terms; English-only on explicit request. See `skills/building-blocks/speaker-notes.md`.
-- **References:** Vancouver-numbered master list at the top of `Documents/Outline.md`. Per-slide `Ref:` line at the bottom. PMIDs verified by web search before adding. See `skills/building-blocks/references.md`.
-- **Images:** Open-access only (PMC, CC-BY / CC-BY-NC), license verified at the source, caption derived from the paper. See `skills/building-blocks/images.md`.
+- **Speaker notes:** audience-language narrative with English medical terms preserved exactly as taught (`Mycobacterium marinum`, `Tinel's sign`, `ATS/IDSA`). For a Thai-speaking audience, this means Thai prose with English clinical terms; English-only on explicit request. See `framework/building-blocks/speaker-notes.md`.
+- **References:** Vancouver-numbered master list at the top of `Documents/Outline.md`. Per-slide `Ref:` line at the bottom. PMIDs verified by web search before adding. See `framework/building-blocks/references.md`.
+- **Images:** Open-access only (PMC, CC-BY / CC-BY-NC), license verified at the source, caption derived from the paper. See `framework/building-blocks/images.md`.
 - **Depth:** Fellowship-level by default — mechanisms, edge cases, evidence behind every key recommendation. Only ask to go shallower if the user requests it.
-- **Local context:** For any drug-related or test-related slide, pair the international guideline with a local-formulary / availability footnote. The provided `skills/content-modules/local-guideline.md` is Thailand-scoped; copy and adapt for other settings.
-- **Source-of-truth lifecycle:** the outline is canonical until the user begins hand-editing the deck; from that point, outline and deck require explicit reconciliation rather than an automatic switchover. See `skills/building-blocks/deck-build.md` Step 7 for the four phases and the reconciliation prompts.
+- **Local context:** For any drug-related or test-related slide, pair the international guideline with a local-formulary / availability footnote. The provided `framework/content-modules/local-guideline.md` is Thailand-scoped; copy and adapt for other settings.
+- **Source-of-truth lifecycle:** the outline is canonical until the user begins hand-editing the deck; from that point, outline and deck require explicit reconciliation rather than an automatic switchover. See `framework/building-blocks/deck-build.md` Step 7 for the four phases and the reconciliation prompts.
 
 ---
 
@@ -103,7 +123,7 @@ Each presentation lives in its own folder under the relevant rotation or format:
         └── Old_versions/                 # superseded full-deck iterations the user no longer actively edits
 ```
 
-The presentation-type skills assume this structure. **At kickoff, the first thing Claude should check is whether the project folder already exists.** If it doesn't, Claude should offer to create the full structure rather than asking the user to set it up manually — this avoids mistyped folder names, missing subfolders, and other setup errors that derail later phases. Only after the folder exists (or the user explicitly says they'll create it themselves) does Claude move into the workflow's kickoff questions.
+The presentation-type files assume this structure. **At kickoff, the first thing Claude should check is whether the project folder already exists.** If it doesn't, Claude should offer to create the full structure rather than asking the user to set it up manually — this avoids mistyped folder names, missing subfolders, and other setup errors that derail later phases. Only after the folder exists (or the user explicitly says they'll create it themselves) does Claude move into the workflow's kickoff questions.
 
 ---
 
@@ -111,21 +131,35 @@ The presentation-type skills assume this structure. **At kickoff, the first thin
 
 | Question | Where |
 |---|---|
-| Why is the framework structured this way? | Section 1 above (architecture) + `skills/retrospective.md` (the lessons that drove the split) |
-| What's the rationale behind the conventions? | `skills/retrospective.md` |
-| How do I build a topic review / journal club / case discussion? | `skills/presentation-types/{type}.md` |
-| How do I assemble a PPTX? Theme constants? | `skills/building-blocks/deck-build.md` |
-| How do I cite papers correctly? | `skills/building-blocks/references.md` |
-| How do I find open-access figures? | `skills/building-blocks/images.md` |
-| How do I write speaker notes? | `skills/building-blocks/speaker-notes.md` |
-| How do I QA the deck visually? | `skills/building-blocks/visual-qa.md` |
-| How do I generate mock Q&A? | `skills/building-blocks/mock-qa.md` |
-| How do I add a bedside layer to a syndrome slide? | `skills/content-modules/clinical-depth.md` |
-| How do I compare against a clinical mimic? | `skills/content-modules/disease-comparison.md` |
-| How do I grade a recommendation (GRADE / ACC-AHA / USPSTF)? | `skills/content-modules/evidence-grading.md` |
-| How do I add local formulary / coverage context? | `skills/content-modules/local-guideline.md` |
-| How do I summarise a paper (chip / landmark card / full summary)? | `skills/content-modules/paper-summary.md` |
-| How do I safely modify a finalized file? | `skills/safe-file-operations.md` |
+| Why is the framework structured this way? | Section 1 above (architecture) + `framework/retrospective.md` (the lessons that drove the split) |
+| What's the rationale behind the conventions? | `framework/retrospective.md` |
+| How do I build a topic review / journal club / case discussion? | `framework/presentation-types/{type}.md` |
+| How do I assemble a PPTX? Theme constants? | `framework/building-blocks/deck-build.md` |
+| How do I auto-fetch a textbook chapter or paper into `Sources/`? | `framework/building-blocks/sources-fetch.md` |
+| How do I cite papers correctly? | `framework/building-blocks/references.md` |
+| How do I find open-access figures? | `framework/building-blocks/images.md` |
+| How do I write speaker notes? | `framework/building-blocks/speaker-notes.md` |
+| How do I QA the deck visually? | `framework/building-blocks/visual-qa.md` |
+| How do I generate mock Q&A? | `framework/building-blocks/mock-qa.md` |
+| How do I add a bedside layer to a syndrome slide? | `framework/content-modules/clinical-depth.md` |
+| How do I compare against a clinical mimic? | `framework/content-modules/disease-comparison.md` |
+| How do I grade a recommendation (GRADE / ACC-AHA / USPSTF)? | `framework/content-modules/evidence-grading.md` |
+| How do I add local formulary / coverage context? | `framework/content-modules/local-guideline.md` |
+| How do I summarise a paper (chip / landmark card / full summary)? | `framework/content-modules/paper-summary.md` |
+| How do I safely modify a finalized file? | `framework/safe-file-operations.md` |
+
+---
+
+## 7. Library configuration (sources-fetch Method B)
+
+For local-library extraction (textbook chapters from a digital collection on your own machine):
+
+- **Library root:** *(set to your local path, e.g., `D:\MEDICINE\TEXTBOOK` on Windows or `~/Medical Library/` on macOS)*
+- **Index file:** `library-index.md` at the library root
+
+`sources-fetch.md` reads the index from this location on every Method B fetch. Set the library root to wherever you keep your digital textbook collection on this machine, then create `library-index.md` listing each book's filename and chapters. Update the path in this section when you set up the library, and keep it current if you move the library later.
+
+This is a per-machine path. Each adopter sets their own here — it is not committed in the public repo template.
 
 ---
 

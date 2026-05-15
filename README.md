@@ -27,31 +27,34 @@ This framework expects to be loaded by Claude Cowork. If you're not using Claude
 **To use:**
 
 1. Install Claude Cowork on your computer (see Anthropic's documentation).
-2. Place this whole folder inside a parent folder you'll use for medical work — see *Folder placement* below.
-3. Connect Claude Cowork to that parent folder so it can read the framework files.
-4. Tell Claude what you want to build (e.g., *"Make a topic review on AKI"*). Claude reads `CLAUDE.md` first to learn the framework, then loads the relevant skill files as it progresses through the workflow.
+2. Clone or download this repository to wherever you want it on your computer.
+3. Connect Claude Cowork to the `Medical Presentation Framework/` folder — that becomes your workspace.
+4. Tell Claude what you want to build (e.g., *"Make a topic review on AKI"*). Claude reads `CLAUDE.md` first to learn the framework, then loads the relevant framework files as it progresses through the workflow.
 
 ---
 
-## Folder placement — where to put this framework
+## Folder placement — what the workspace looks like
 
-The framework is a **template / instruction set** for Claude. It lives in its own folder, separate from your actual presentation projects. A recommended layout on your computer:
+The `Medical Presentation Framework/` folder is **the Cowork workspace**. Both the framework's instruction files (`CLAUDE.md`, `README.md`, `framework/`, `sources-fetch.skill`) and your topic folders (Internal Medicine, Rheumatology, etc.) live inside it. Topic folders are created and edited next to the framework files — they're siblings.
 
 ```
-My Presentations/                         ← your top-level folder
+Medical Presentation Framework/           ← Cowork workspace; point Cowork here
+├── CLAUDE.md                              ← Cowork auto-reads this first
+├── README.md                              ← this file (human-facing intro)
+├── sources-fetch.skill                    ← Cowork auto-installs .skill bundles from root
+├── (any other .skill bundles)
 │
-├── Medical Presentation Framework/       ← this repo, cloned as-is
-│   ├── CLAUDE.md
-│   ├── README.md
-│   ├── skills/
-│   │   ├── retrospective.md
-│   │   ├── safe-file-operations.md
-│   │   ├── building-blocks/
-│   │   ├── content-modules/
-│   │   └── presentation-types/
-│   └── (other framework files)
+├── framework/                             ← the framework's instruction files
+│   ├── retrospective.md
+│   ├── safe-file-operations.md
+│   ├── building-blocks/
+│   ├── content-modules/
+│   └── presentation-types/
 │
-├── Internal Medicine/                    ← your real projects, organised by rotation
+├── theme/                                 ← your reusable theme palettes (markdown) — see theme/README.md
+├── templates/                             ← your institutional or personal PPTX templates — see templates/README.md
+│
+├── Internal Medicine/                     ← your topic folders, organised by rotation
 │   ├── Hyponatremia/
 │   ├── Heart Failure GDMT/
 │   └── Pneumonia in IC host/
@@ -64,7 +67,18 @@ My Presentations/                         ← your top-level folder
     └── EMPEROR-Reduced 2020/
 ```
 
-Claude Cowork should be pointed at the `My Presentations` folder so it can see both the framework AND your projects.
+**About `theme/` and `templates/`:**
+
+- `theme/` is where you save reusable palette files — colour values, fonts, footer convention. Drop one `*.md` file per named theme (e.g., `theme/Academic-Navy.md`). The framework reads from this folder when you build a deck, so a saved theme can be reused across projects. See `theme/README.md` for the file format.
+- `templates/` is for institutional PPTX templates (`*.pptx` files). If your hospital has a branded master deck, drop it here and Claude uses it as the base for the unpack/repack build mode (`deck-build.md` Step 5). See `templates/README.md`.
+- Both folders are gitignored except for their `README.md` — your saved themes and templates stay on your machine and aren't pushed to the public repo.
+
+**Why this layout works:**
+
+- Cowork auto-reads `CLAUDE.md` from the workspace root (the `Medical Presentation Framework/` folder).
+- `.skill` bundles at the workspace root (like `sources-fetch.skill`) get auto-installed by Cowork.
+- The framework's instruction set lives in the `framework/` subfolder — separate from anything Cowork treats as a skill, so there's no naming collision.
+- Topic folders live as siblings of `framework/`, not inside it — your real work stays neatly separated from the framework's machinery.
 
 ---
 
@@ -143,7 +157,7 @@ After the talk, Claude can help integrate faculty feedback safely (always with a
 Medical Presentation Framework/
 ├── CLAUDE.md                       Entry point. Claude reads this first to learn the framework.
 ├── README.md                       This file.
-└── skills/
+└── framework/
     ├── retrospective.md             Rolling log of presentations built with the framework — the "why" behind each rule. Append new cases over time.
     ├── safe-file-operations.md      Discipline. How to handle "Final" files without overwriting them. Always loaded.
     ├── presentation-types/          One file per presentation format (the entry points users invoke):
@@ -173,11 +187,11 @@ The **layered architecture** means: update a building block once → every prese
 
 The defaults reflect a Thai academic medical setting. Three places where adaptation is most likely:
 
-1. **Theme palette.** `skills/building-blocks/deck-build.md` Step 1 asks the user about theme before generating slides — you can specify your institution's brand colours, hand Claude an existing PowerPoint template, or accept the academic default with a Pantone palette. The font-size constants in Step 2 are tuned for readability in a real lecture hall (~+2 pt over typical defaults).
+1. **Theme palette.** `framework/building-blocks/deck-build.md` Step 1 asks the user about theme before generating slides — you can specify your institution's brand colours, hand Claude an existing PowerPoint template, or accept the academic default with a Pantone palette. The font-size constants in Step 2 are tuned for readability in a real lecture hall (~+2 pt over typical defaults).
 
 2. **Language.** Speaker notes default to Thai narrative with English medical terms preserved. To switch to English-only or another audience language, say so at Phase 1 kickoff (`speaker-notes.md` describes the convention).
 
-3. **Local-context content module.** `skills/content-modules/local-guideline.md` is Thailand-scoped (NHSO, RCPT, Thai formulary). For other countries, fork this file and substitute your national formulary / coverage system / specialty society references.
+3. **Local-context content module.** `framework/content-modules/local-guideline.md` is Thailand-scoped (NHSO, RCPT, Thai formulary). For other countries, fork this file and substitute your national formulary / coverage system / specialty society references.
 
 ---
 
@@ -189,7 +203,7 @@ Before any operation that touches a "Final" or "important" file, the framework r
 2. **Write to a new filename** — never overwrite the original; let the user verify and rename.
 3. **Independent verification** — slide count, image count, speaker-note count, and content of 3–5 representative slides must match expectations before reporting done.
 
-These rules are codified in `skills/safe-file-operations.md` and are read before any rebuild or post-feedback update. The background that led to these rules lives in `skills/retrospective.md`.
+These rules are codified in `framework/safe-file-operations.md` and are read before any rebuild or post-feedback update. The background that led to these rules lives in `framework/retrospective.md`.
 
 ---
 
@@ -213,4 +227,4 @@ These rules are codified in `skills/safe-file-operations.md` and are read before
 
 This framework is offered as-is for use by medical residents, fellows, and faculty preparing academic presentations. If you adapt it for your country or institution, you're welcome to share back your local-guideline variant or any new presentation types you add.
 
-The framework's design and the rationale behind each convention are captured in `skills/retrospective.md` — read once at the start of a new project, append to after each new presentation.
+The framework's design and the rationale behind each convention are captured in `framework/retrospective.md` — read once at the start of a new project, append to after each new presentation.

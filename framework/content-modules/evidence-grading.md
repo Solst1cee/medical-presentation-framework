@@ -106,7 +106,7 @@ A short legend on the slide (*"COR = Class of Recommendation; LOE = Level of Evi
 
 ### Speaker notes — say the grade out loud
 
-In the speaker-notes narrative (per `skills/building-blocks/speaker-notes.md`), say the grade in words, not just the code. Example: *"นี่เป็นคำแนะนำ Class I, Level A ซึ่งแปลว่า…"* — say what the grade means, not just the letter.
+In the speaker-notes narrative (per `framework/building-blocks/speaker-notes.md`), say the grade in words, not just the code. Example: *"นี่เป็นคำแนะนำ Class I, Level A ซึ่งแปลว่า…"* — say what the grade means, not just the letter.
 
 ---
 
@@ -129,7 +129,7 @@ This pattern works because it (a) names both sources, (b) gives each its own gra
 
 ### When the divergence is between an international guideline and the local one
 
-If RCPT (or local equivalent) takes a different position from ACC/AHA or ESC — or if the recommended drug is not on the local formulary — pair this section with `skills/content-modules/local-guideline.md`. The two modules are designed to be used together for any drug- or test-related slide.
+If RCPT (or local equivalent) takes a different position from ACC/AHA or ESC — or if the recommended drug is not on the local formulary — pair this section with `framework/content-modules/local-guideline.md`. The two modules are designed to be used together for any drug- or test-related slide.
 
 ---
 
@@ -191,9 +191,9 @@ If RCPT (or local equivalent) takes a different position from ACC/AHA or ESC —
 ## Where the grade lives in the workflow
 
 - **Outline phase** — when a recommendation is added to the outline, the grade is added on the same line. No ungraded recommendation should reach the slide stage.
-- **Slide phase** — grade goes in brackets at the end of the recommendation, on the slide itself (per `skills/building-blocks/deck-build.md` — keep on-slide text minimal but the grade is one of the few things that earns its place).
-- **Speaker notes phase** — grade is said in words (per `skills/building-blocks/speaker-notes.md`) — both the code and what it means.
-- **Mock Q&A phase** — anticipate *"is that a Class I or Class IIa?"* and *"why does USPSTF disagree?"* (per `skills/building-blocks/mock-qa.md`).
+- **Slide phase** — grade goes in brackets at the end of the recommendation, on the slide itself (per `framework/building-blocks/deck-build.md` — keep on-slide text minimal but the grade is one of the few things that earns its place).
+- **Speaker notes phase** — grade is said in words (per `framework/building-blocks/speaker-notes.md`) — both the code and what it means.
+- **Mock Q&A phase** — anticipate *"is that a Class I or Class IIa?"* and *"why does USPSTF disagree?"* (per `framework/building-blocks/mock-qa.md`).
 
 ---
 

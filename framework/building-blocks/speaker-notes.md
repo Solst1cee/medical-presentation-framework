@@ -116,7 +116,7 @@ For the unpack/repack XML mode, the `wrap_slide(body, notes=notes_text)` helper 
 | Journal club | 6–10 sentences on critical-appraisal slides (more dense — defending methodological choices); 2–3 on background |
 | Case discussion | 5–8 sentences per phase (HPI / PE / workup / management); the case-narrative slides deserve more talking time |
 
-Don't over-prepare notes for ceremonial slides (title, dividers, references) — one orientation sentence suffices. Additional rows for reserved presentation types (M&M, operative-technique) will be added when those skills are built.
+Don't over-prepare notes for ceremonial slides (title, dividers, references) — one orientation sentence suffices. Additional rows for reserved presentation types (M&M, operative-technique) will be added when those presentation types are built.
 
 ---
 

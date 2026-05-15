@@ -9,7 +9,7 @@ description: "Optional content module for any clinical-syndrome slide that needs
 
 Medical presentations tend to skew toward imaging, microbiology, and treatment because those are concrete and citation-rich. The **bedside encounter layer** — what the patient says, what the patient looks like, what the examining clinician notices — is often thin. A deck that lists risk factors, imaging features, and antibiotic regimens but says little about *how a patient with this syndrome would actually present at first encounter* fails the most important test: could a resident reading this deck recognise the disease in clinic next week?
 
-See `skills/retrospective.md` for the project history that drove this module.
+See `framework/retrospective.md` for the project history that drove this module.
 
 ---
 

@@ -9,7 +9,7 @@ description: "Optional content module for building a comparison against a clinic
 
 Faculty often ask comparison questions. "How is NTM septic arthritis different from TB?" is the kind of question where a fragmentary answer ("NTM is more in the hand") falls short. A trained resident should be able to compare across **all clinical axes** — not just one. The trap to avoid: relegating the comparison to a single slide deep in the deck. The contrast should be set up early (dedicated comparison slide immediately after introducing the topic) and reinforced throughout, not buried under a single sub-topic.
 
-See `skills/retrospective.md` for the project history that drove this module.
+See `framework/retrospective.md` for the project history that drove this module.
 
 ---
 

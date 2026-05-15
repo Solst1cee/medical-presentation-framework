@@ -24,23 +24,24 @@ This skill is a **thin wrapper**: it describes what's specific to case discussio
 
 ## Building blocks to follow
 
-- For PPTX mechanics, theme, and slide layouts → `skills/building-blocks/deck-build.md`
-- For references and PMID verification → `skills/building-blocks/references.md`
-- For open-access figure sourcing if you need stock imaging beyond the patient's own → `skills/building-blocks/images.md`
-- For speaker notes format → `skills/building-blocks/speaker-notes.md`
-- For visual QA → `skills/building-blocks/visual-qa.md`
-- For mock Q&A → `skills/building-blocks/mock-qa.md`
+- For PPTX mechanics, theme, and slide layouts → `framework/building-blocks/deck-build.md`
+- For auto-fetching textbook chapters and primary papers cited in the discussion section into `Sources/` → `framework/building-blocks/sources-fetch.md`
+- For references and PMID verification → `framework/building-blocks/references.md`
+- For open-access figure sourcing if you need stock imaging beyond the patient's own → `framework/building-blocks/images.md`
+- For speaker notes format → `framework/building-blocks/speaker-notes.md`
+- For visual QA → `framework/building-blocks/visual-qa.md`
+- For mock Q&A → `framework/building-blocks/mock-qa.md`
 
 ## Content modules to consider
 
-- For the bedside layer — what was on history, what the exam showed → `skills/content-modules/clinical-depth.md`
-- For the local-context layer — what drug was available, what test was orderable → `skills/content-modules/local-guideline.md`
-- If the final diagnosis has a clinical mimic that was on the differential → `skills/content-modules/disease-comparison.md`
-- For the management slide(s) and the discussion section — if the treatment chosen, workup ordered, or take-home points follow a named guideline → `skills/content-modules/evidence-grading.md` (grade + system + year on each recommendation; if the actual case management diverged from the guideline-recommended approach, name the grade of what was recommended and discuss the divergence as a teaching point)
+- For the bedside layer — what was on history, what the exam showed → `framework/content-modules/clinical-depth.md`
+- For the local-context layer — what drug was available, what test was orderable → `framework/content-modules/local-guideline.md`
+- If the final diagnosis has a clinical mimic that was on the differential → `framework/content-modules/disease-comparison.md`
+- For the management slide(s) and the discussion section — if the treatment chosen, workup ordered, or take-home points follow a named guideline → `framework/content-modules/evidence-grading.md` (grade + system + year on each recommendation; if the actual case management diverged from the guideline-recommended approach, name the grade of what was recommended and discuss the divergence as a teaching point)
 
 ## Discipline (always applies)
 
-- Before any rebuild → `skills/safe-file-operations.md`
+- Before any rebuild → `framework/safe-file-operations.md`
 - **De-identification check before sharing:** see below
 
 ---
@@ -156,6 +157,8 @@ Verify de-identification of this file before proceeding.
 
 Build `Documents/{Case} outline.md` following the deck skeleton above. Decide where to place "What's your differential?" pause slides.
 
+As the discussion section takes shape, list the textbook chapters and primary papers it will cite — then offer to fetch them via `sources-fetch.md` so they land in `Sources/Reference_papers/` ready for verbatim quoting. The case material itself (timeline, discharge summary, imaging) is user-supplied and de-identified separately; `sources-fetch.md` is for the *teaching* sources that anchor the discussion.
+
 ### Phase 4 — Build deck
 
 Apply `deck-build.md`. Save as `Deck/{Case} slide v1.pptx` (e.g., `65F PUO admitted day 0 slide v1.pptx`) — never name a working copy `(Final)`; the user assigns that label.
@@ -225,13 +228,4 @@ Apply `mock-qa.md`. For a case discussion, generate **15–25 questions** distri
 
 - [ ] Case is de-identified at every level (slides, notes, files, metadata)
 - [ ] Timeline reconstructed from real notes, not training-knowledge inference
-- [ ] Outline includes 2–3 pause-and-reveal slides
-- [ ] Discussion section has clear teaching points, not just a literature dump
-- [ ] At least 2–3 take-home points
-- [ ] If diagnosis has a mimic — `disease-comparison.md` applied
-- [ ] If drugs/labs from the case — `local-guideline.md` applied for availability
-- [ ] References cited for the discussion section's primary literature
-
----
-
-*Case-discussion thin wrapper. Mechanics in building blocks; teaching depth in content modules; de-identification mandatory; safety discipline in `safe-file-operations.md`.*
+- [ ] Outl

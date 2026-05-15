@@ -83,7 +83,7 @@ Adjust for other formats:
 | Journal club | 18–28 | Internal validity, generalisability, conflict-of-interest |
 | Case discussion | 15–25 | Decision points, alternative dx, why-not-X |
 
-Rows for reserved presentation types (M&M, operative-technique) will be added when those skills are built.
+Rows for reserved presentation types (M&M, operative-technique) will be added when those presentation types are built.
 
 ---
 

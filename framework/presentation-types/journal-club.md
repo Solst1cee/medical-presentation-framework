@@ -24,11 +24,12 @@ This skill is a **thin wrapper**: it describes what's specific to journal clubs 
 
 ## Building blocks to follow
 
-- For PPTX mechanics, theme, and slide layouts → `skills/building-blocks/deck-build.md`
-- For references and PMID verification → `skills/building-blocks/references.md`
-- For speaker notes format → `skills/building-blocks/speaker-notes.md`
-- For visual QA → `skills/building-blocks/visual-qa.md`
-- For mock Q&A → `skills/building-blocks/mock-qa.md`
+- For PPTX mechanics, theme, and slide layouts → `framework/building-blocks/deck-build.md`
+- For auto-fetching the paper PDF, supplementary appendix, protocol, and prior trials into `Sources/` → `framework/building-blocks/sources-fetch.md`
+- For references and PMID verification → `framework/building-blocks/references.md`
+- For speaker notes format → `framework/building-blocks/speaker-notes.md`
+- For visual QA → `framework/building-blocks/visual-qa.md`
+- For mock Q&A → `framework/building-blocks/mock-qa.md`
 
 Image sourcing (`images.md`) is rarely needed — most journal-club slides are tables and forest plots. If the paper provides a figure under CC-BY, use it directly; check the licensing section of the paper.
 
@@ -38,13 +39,13 @@ Most JC decks work directly from the paper. These modules apply only at specific
 
 | Module | When it applies |
 |---|---|
-| `skills/content-modules/evidence-grading.md` | **Background slides** that cite prior guidelines or trials — annotate each prior recommendation with its grade (GRADE / ACC-AHA Class + LOE / USPSTF) so the audience sees how strong the field's position was before the paper. **Central** if the paper being appraised is itself a guideline, a systematic review with GRADE certainty per outcome, or otherwise issues formal recommendations. **"Would this change my practice?"** slide — name the grade of the existing guideline you would be diverging from. |
-| `skills/content-modules/local-guideline.md` | "Would this change my practice in my setting?" slide — pair with local formulary / coverage where drug access matters. |
-| `skills/content-modules/paper-summary.md` | Optional, for scaffolding only — a Tier 2 or Tier 3 card of the paper can structure the early outline. Most JC outlines work directly from the paper without this step. |
+| `framework/content-modules/evidence-grading.md` | **Background slides** that cite prior guidelines or trials — annotate each prior recommendation with its grade (GRADE / ACC-AHA Class + LOE / USPSTF) so the audience sees how strong the field's position was before the paper. **Central** if the paper being appraised is itself a guideline, a systematic review with GRADE certainty per outcome, or otherwise issues formal recommendations. **"Would this change my practice?"** slide — name the grade of the existing guideline you would be diverging from. |
+| `framework/content-modules/local-guideline.md` | "Would this change my practice in my setting?" slide — pair with local formulary / coverage where drug access matters. |
+| `framework/content-modules/paper-summary.md` | Optional, for scaffolding only — a Tier 2 or Tier 3 card of the paper can structure the early outline. Most JC outlines work directly from the paper without this step. |
 
 ## Discipline (always applies)
 
-- Before any rebuild → `skills/safe-file-operations.md`
+- Before any rebuild → `framework/safe-file-operations.md`
 
 ---
 
@@ -244,6 +245,8 @@ Also classify the design (RCT / observational / SR-MA / diagnostic) so the match
 
 ### Phase 2 — Read the paper (30–60 min)
 
+**Before reading, ensure the working set is in `Sources/`.** A journal-club working set is usually: the paper PDF, its supplementary appendix, the trial protocol if available, the trial-registration record (screenshot or text export of the registry's outcome list), and 2–3 prior trials/guidelines cited in the background. Use `sources-fetch.md` to acquire anything not yet on hand — browser download via VPN handles publisher PDFs, supplementary appendices, and registry exports; PMC works for the prior background papers when they're open access.
+
 Read the actual PDF carefully — methods first, then results, then discussion last. Don't infer from the abstract or training knowledge. Walk through the matching study-design checklist above AND the red-flags checklist as you read. Note:
 
 - Pre-specified primary outcome
@@ -319,14 +322,4 @@ Apply `mock-qa.md`. For a journal club, generate **18–28 questions** distribut
 - [ ] Read the paper PDF carefully (not just the abstract); supplementary appendix opened too
 - [ ] Design classified; matching appraisal tool downloaded from the toolbox
 - [ ] Trial-registration record opened side-by-side with the paper to compare outcomes
-- [ ] Design-specific checklist walked through; verdict recorded
-- [ ] Red-flags checklist walked through; ≥3 items flagged or explicitly cleared
-- [ ] Build outline → deck → visual QA → speaker notes → mock Q&A
-- [ ] Bottom-line slide answers "would this change my practice?" directly
-- [ ] At least 3 critical-appraisal limitations identified
-- [ ] At least 3 strengths acknowledged
-- [ ] References include the paper, the registry record, and 2–3 prior trials cited in background
-
----
-
-*Journal-club thin wrapper. Mechanics live in the building blocks; safety discipline in `safe-file-operations.md`. The paper is the content — pick the right appraisal tool for the design, walk the red-flags list, and name what you used.*
+- [ ] Design-specific checklist walked 

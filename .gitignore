@@ -1,7 +1,7 @@
 # Medical Presentation Framework — .gitignore
 
-# Development backups and superseded drafts. See CLAUDE.md (top section)
-# for what this folder is and why it's excluded.
+# Development backups and superseded drafts. See MAINTAINER.md for what
+# this folder is and why it's excluded.
 not-used/
 
 # Backup files anywhere in the tree (safe-file-operations.md convention:
@@ -25,11 +25,35 @@ __pycache__/
 venv/
 
 # Live working presentation projects — keep the framework repo clean of
-# patient-adjacent or in-progress decks. Remove this section if you want
-# example projects published alongside the framework.
-# (Uncomment the next lines to apply.)
-# Departments/
-# Rotations/
-# Cases/
+# patient-adjacent or in-progress decks. Uncomment lines that match the
+# topic-folder names you use, or add your own. The README's example layout
+# uses rotation names like the ones below.
+# Internal Medicine/
+# Rheumatology/
+# Nephrology/
+# Cardiology/
+# Infectious Diseases/
+# Endocrinology/
+# Journal Club/
+# Case Discussions/
 
+# User theme files (under theme/) — track only the README, exclude the
+# user's own theme palettes which are often institution-specific.
+theme/*
+!theme/README.md
+
+# User PPTX templates (under templates/) — track only the README, exclude
+# the user's own template files which are often institution-confidential.
+templates/*
+!templates/README.md
+
+# Personal files at workspace root (e.g., personal theme drafts, notes)
+# matching the *_personal pattern.
+*_personal.md
+
+# Local-only maintainer files — not part of the public framework.
+# AGENTS.md is a stub pointing at CLAUDE.md for non-Cowork agents;
+# MAINTAINER.md is the maintainer's private dev guide. Both stay on the
+# maintainer's machine only.
 AGENTS.md
+MAINTAINER.md

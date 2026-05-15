@@ -13,17 +13,31 @@ Loaded by a presentation-type skill (`topic-review.md`, `journal-club.md`, `case
 
 ## Step 1 — Ask the user about theme before generating anything
 
-Before producing a single slide, ask:
+**Step 1a — Check the workspace's saved theme and template folders first.**
+
+Before asking the user from scratch, look at what's already saved at the workspace root:
+
+- `theme/` — markdown files defining the user's named palettes (one file per theme). See `theme/README.md` for format.
+- `templates/` — institutional or personal PPTX templates the user has dropped in. See `templates/README.md`.
+
+If either folder contains files, **list them to the user** and ask whether to use one before going through fresh kickoff questions. Suggested phrasing:
+
+> *"I see `theme/Academic-Navy.md` saved at the workspace root. Want me to use it for this deck, or pick something else?"*
+
+This saves time and keeps the user's preferred palettes / templates reusable across projects.
+
+**Step 1b — If nothing's saved (or user wants something different), ask:**
 
 1. **Do you have an existing PPTX template, brand palette, or institutional slide template you want to use?**
-   - Yes → use unpack/repack XML mode against that template (see Step 5). Match its existing colours, fonts, and footer. Don't reinvent them.
+   - Yes, a `.pptx` template → use unpack/repack XML mode against that template (see Step 5). Match its existing colours, fonts, and footer. Don't reinvent them. Offer to save it to `templates/` for future re-use.
+   - Yes, a colour palette → ask for the values (or whether to read them from a file). Offer to save to `theme/` for future re-use.
    - No → apply the academic default theme (Step 2).
 
 2. **Is there an existing slide example (one you've made before, or a colleague's deck) you want me to mimic?**
    - Yes → ask for the file path. Read its theme constants (colours, font, header style) and apply them to the new deck.
    - No → continue to Step 2.
 
-Never assume an institutional theme. Always ask.
+Never assume an institutional theme. Always ask, even after checking `theme/` and `templates/`.
 
 ---
 
@@ -411,7 +425,7 @@ Note: helper defaults like `size=BODY_SIZE` reflect the Step 3 font-size constan
 For inserting new slides into a user-provided template without touching their existing slides:
 
 ```bash
-python mnt/.claude/skills/pptx/scripts/office/unpack.py "Main/file.pptx" unpacked/
+python mnt/.claude/framework/pptx/scripts/office/unpack.py "Main/file.pptx" unpacked/
 # Find insertion point in presentation.xml → <p:sldIdLst>
 # START_SLIDE_NUM = [last slide file number] + 1
 # START_SLIDE_ID  = [last sldId number] + 1
@@ -472,8 +486,8 @@ def wrap_slide(body, notes=None):
 Pack with the standard helper:
 
 ```bash
-python mnt/.claude/skills/pptx/scripts/clean.py unpacked/
-python mnt/.claude/skills/pptx/scripts/office/pack.py \
+python mnt/.claude/framework/pptx/scripts/clean.py unpacked/
+python mnt/.claude/framework/pptx/scripts/office/pack.py \
     unpacked/ "Main/Topic review_[TOPIC].pptx" \
     --original "Main/Topic review.pptx"
 ```
