@@ -27,6 +27,7 @@ This skill is a **thin wrapper**: it describes what's specific to journal clubs 
 - For PPTX mechanics, theme, and slide layouts → `framework/building-blocks/deck-build.md`
 - For auto-fetching the paper PDF, supplementary appendix, protocol, and prior trials into `Sources/` → `framework/building-blocks/sources-fetch.md`
 - For references and PMID verification → `framework/building-blocks/references.md`
+- For **automated reference reconciliation** (audit script) → `framework/building-blocks/reference-audit.md` — load and run at slide-removal events, end of Phase 3 (outline finalised), start of Phase 4 (build), and Phase 6 reconciliation
 - For speaker notes format → `framework/building-blocks/speaker-notes.md`
 - For visual QA → `framework/building-blocks/visual-qa.md`
 - For mock Q&A → `framework/building-blocks/mock-qa.md`
@@ -261,13 +262,29 @@ Read the actual PDF carefully — methods first, then results, then discussion l
 
 Build `Documents/Outline.md` following the 15–25 slide skeleton. PICO, methods, results — copy the numbers directly from the paper, don't paraphrase. The critical-appraisal section comes from your own reading using the design-specific checklist and the red-flags list. Name the appraisal tool you applied (e.g., "Appraised using Cochrane RoB 2 — overall judgement: Some concerns") on the first appraisal slide.
 
+**Slide-removal trigger** — if the user asks to remove a slide or cut a section, run `audit_references.py` (see `reference-audit.md`) before and after the removal, surface newly-orphaned refs, and ask whether to drop them from the master list. Do not delete files from `Sources/` as part of this — only the master-list entry.
+
+**End-of-Phase-3 audit (mandatory)** — before transitioning to Phase 4, run the reference audit. Block the transition if any BROKEN citations exist.
+
 ### Phase 4 — Build deck (45–60 min)
+
+**Mandatory entry step — run the reference audit BEFORE any python-pptx work.** See `reference-audit.md`:
+
+```bash
+python3 framework/building-blocks/audit_references.py \
+    "{Department}/Journal Club/{Paper short title}/Documents/Outline.md" \
+    "{Department}/Journal Club/{Paper short title}/Sources/"
+```
+
+If the audit reports BROKEN citations or other issues, surface them and resolve before proceeding.
 
 Apply `deck-build.md`. Save as `JC_v1.pptx`, not `(Final)`.
 
 ### Phase 5 — Visual QA + speaker notes (30–45 min)
 
 Apply `visual-qa.md` and `speaker-notes.md`. For a journal club, speaker notes should be denser on the appraisal slides (6–10 sentences) because you may need to defend methodological judgments.
+
+**Final reference reconciliation** — run `audit_references.py` one more time at the end of this phase. If it returns 0 issues, the references are reconciled and the deck is ready for the user's review.
 
 ### Phase 6 — Mock Q&A (20–30 min)
 
@@ -322,4 +339,17 @@ Apply `mock-qa.md`. For a journal club, generate **18–28 questions** distribut
 - [ ] Read the paper PDF carefully (not just the abstract); supplementary appendix opened too
 - [ ] Design classified; matching appraisal tool downloaded from the toolbox
 - [ ] Trial-registration record opened side-by-side with the paper to compare outcomes
-- [ ] Design-specific checklist walked 
+- [ ] Design-specific checklist walked through during reading; red-flags checklist applied
+- [ ] PICO laid out clearly on its own slide; numbers copied verbatim from the paper
+- [ ] Master reference list built; PMIDs verified by web search
+- [ ] `audit_references.py` run at end of Phase 3 and start of Phase 4; no BROKEN / ORPHANED entries
+- [ ] Deck built per `deck-build.md`; appraisal tool named on the first appraisal slide
+- [ ] Visual QA per `visual-qa.md`; speaker notes dense on appraisal slides per `speaker-notes.md`
+- [ ] Final `audit_references.py` run returns 0 issues
+- [ ] Mock Q&A generated (18–28 questions weighted toward methodology)
+- [ ] "Would this change my practice?" slide answers directly with reasoning anchored in the appraisal
+- [ ] `safe-file-operations.md` applied before any rebuild or post-presentation update
+
+---
+
+*Journal-club workflow — thin wrapper over the framework building blocks. Skeptical-but-charitable reading; never trash, never cheerlead.*

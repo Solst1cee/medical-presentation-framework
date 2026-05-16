@@ -1,6 +1,6 @@
 # CLAUDE.md — Medical Presentation Framework
 
-A modular framework for medical academic presentations: topic reviews, journal clubs, case discussions (with M&M and operative-technique slots reserved for later formats). One set of reusable building blocks — deck-build, sources-fetch, librarian, references, images, speaker-notes, visual-qa, mock-qa — that any presentation type can call.
+A modular framework for medical academic presentations: topic reviews, journal clubs, case discussions (with M&M and operative-technique slots reserved for later formats). One set of reusable building blocks — deck-build, sources-fetch, librarian, references, reference-audit, images, speaker-notes, visual-qa, mock-qa — that any presentation type can call.
 
 Originally authored by an internal-medicine resident in Thailand. The default conventions (English slides, Thai-narrative speaker notes with English medical terms, a home-institution theme palette, Thai NLEM/NHSO local-context content module) reflect that setting. If you're adopting the framework elsewhere, the conventions in Section 4 and the theme constants in `framework/building-blocks/deck-build.md` are designed to be the points you swap.
 
@@ -40,14 +40,16 @@ PRESENTATION TYPES   framework/presentation-types/
                        └── case-discussion.md
     ↑ thin wrappers; reference building blocks by Read path
 BUILDING BLOCKS   framework/building-blocks/
-                       ├── deck-build.md      (theme + layouts + python-pptx + unpack/repack)
-                       ├── sources-fetch.md   (browser download via VPN + local-library extraction → Sources/)
-                       ├── librarian.md       (rename PDFs, maintain library-index.md, classify whole vs partial)
-                       ├── references.md      (Vancouver + PMID verification)
-                       ├── images.md          (PMC open-access + license + caption)
-                       ├── speaker-notes.md   (audience-language narrative + English medical terms)
-                       ├── visual-qa.md       (PDF render + PNG checks)
-                       └── mock-qa.md         (anticipated Q&A, in/beyond deck)
+                       ├── deck-build.md         (theme + layouts + python-pptx + unpack/repack)
+                       ├── sources-fetch.md      (browser download via VPN + local-library extraction → Sources/)
+                       ├── librarian.md          (rename PDFs, maintain library-index.md, classify whole vs partial)
+                       ├── references.md         (Vancouver + PMID verification)
+                       ├── reference-audit.md +  (automated orphan/broken-citation check;
+                       │   audit_references.py    triggered on slide-removal, end-Phase-3, start-Phase-4, final)
+                       ├── images.md             (PMC open-access + license + caption)
+                       ├── speaker-notes.md      (audience-language narrative + English medical terms)
+                       ├── visual-qa.md          (PDF render + PNG checks)
+                       └── mock-qa.md            (anticipated Q&A, in/beyond deck)
     ↑ optionally enriched by
 CONTENT MODULES   framework/content-modules/
                        ├── clinical-depth.md       (bedside Hx + exam + cohort %)
@@ -139,6 +141,7 @@ The presentation-type files assume this structure. **At kickoff, the first thing
 | How do I auto-fetch a textbook chapter or paper into `Sources/`? | `framework/building-blocks/sources-fetch.md` |
 | How do I rename PDFs / update `library-index.md` / classify a textbook? | `framework/building-blocks/librarian.md` |
 | How do I cite papers correctly? | `framework/building-blocks/references.md` |
+| How do I check for orphaned / broken citations automatically? | `framework/building-blocks/reference-audit.md` (uses `audit_references.py`) |
 | How do I find open-access figures? | `framework/building-blocks/images.md` |
 | How do I write speaker notes? | `framework/building-blocks/speaker-notes.md` |
 | How do I QA the deck visually? | `framework/building-blocks/visual-qa.md` |
@@ -159,10 +162,4 @@ For local-library extraction (textbook chapters from a digital collection on you
 - **Library root:** *(set to your local path, e.g., `D:\MEDICINE\TEXTBOOK` on Windows or `~/Medical Library/` on macOS)*
 - **Index file:** `library-index.md` at the library root
 
-`sources-fetch.md` reads the index from this location on every Method B fetch. Set the library root to wherever you keep your digital textbook collection on this machine, then create `library-index.md` listing each book's filename and chapters. Update the path in this section when you set up the library, and keep it current if you move the library later.
-
-This is a per-machine path. Each adopter sets their own here — it is not committed in the public repo template.
-
----
-
-*Medical Presentation Framework — layered architecture. Update a building block once; every presentation type that uses it gets the new version on the next session.*
+`sources-fetch.md` reads the index from this location on every Method B fetch. Set the library root to wherever you keep your digital textbook collection on this machine, then create `library-index.md` listing each book's filename and chapters. Update

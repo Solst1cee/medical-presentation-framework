@@ -27,6 +27,7 @@ This skill is a **thin wrapper**: it describes what's specific to case discussio
 - For PPTX mechanics, theme, and slide layouts → `framework/building-blocks/deck-build.md`
 - For auto-fetching textbook chapters and primary papers cited in the discussion section into `Sources/` → `framework/building-blocks/sources-fetch.md`
 - For references and PMID verification → `framework/building-blocks/references.md`
+- For **automated reference reconciliation** (audit script) → `framework/building-blocks/reference-audit.md` — load and run at slide-removal events, end of Phase 3 (outline finalised), start of Phase 4 (build), and final reconciliation at Phase 5
 - For open-access figure sourcing if you need stock imaging beyond the patient's own → `framework/building-blocks/images.md`
 - For speaker notes format → `framework/building-blocks/speaker-notes.md`
 - For visual QA → `framework/building-blocks/visual-qa.md`
@@ -159,7 +160,21 @@ Build `Documents/{Case} outline.md` following the deck skeleton above. Decide wh
 
 As the discussion section takes shape, list the textbook chapters and primary papers it will cite — then offer to fetch them via `sources-fetch.md` so they land in `Sources/Reference_papers/` ready for verbatim quoting. The case material itself (timeline, discharge summary, imaging) is user-supplied and de-identified separately; `sources-fetch.md` is for the *teaching* sources that anchor the discussion.
 
+**Slide-removal trigger** — if the user asks to remove a slide or cut a section, run `audit_references.py` (see `reference-audit.md`) before and after the removal, surface newly-orphaned refs, and ask whether to drop them from the master list. Do not delete files from `Sources/` as part of this — only the master-list entry.
+
+**End-of-Phase-3 audit (mandatory)** — before transitioning to Phase 4, run the reference audit. Block the transition if any BROKEN citations exist.
+
 ### Phase 4 — Build deck
+
+**Mandatory entry step — run the reference audit BEFORE any python-pptx work.** See `reference-audit.md`:
+
+```bash
+python3 framework/building-blocks/audit_references.py \
+    "{Department}/Case Discussions/{Case short title}/Documents/{Case} outline.md" \
+    "{Department}/Case Discussions/{Case short title}/Sources/Reference_papers/"
+```
+
+If the audit reports BROKEN citations or other issues, surface them and resolve before proceeding.
 
 Apply `deck-build.md`. Save as `Deck/{Case} slide v1.pptx` (e.g., `65F PUO admitted day 0 slide v1.pptx`) — never name a working copy `(Final)`; the user assigns that label.
 
@@ -172,6 +187,8 @@ If stock imaging is needed for the discussion section (e.g., a schematic of a pa
 Apply `visual-qa.md` and `speaker-notes.md`.
 
 For a case discussion, speaker notes have a particular feature: **don't reveal information on the speaker notes that's intentionally suspenseful on the slide**. If the slide is a pause-and-reveal, the speaker notes for that slide should describe the pause, not the answer.
+
+**Final reference reconciliation** — run `audit_references.py` one more time at the end of this phase. If it returns 0 issues, the references are reconciled and the deck is ready for the user's review.
 
 ### Phase 6 — Mock Q&A
 
@@ -228,4 +245,15 @@ Apply `mock-qa.md`. For a case discussion, generate **15–25 questions** distri
 
 - [ ] Case is de-identified at every level (slides, notes, files, metadata)
 - [ ] Timeline reconstructed from real notes, not training-knowledge inference
-- [ ] Outl
+- [ ] Outline follows the deck skeleton; pause-and-reveal slides placed at 2–3 decision points
+- [ ] Discussion-section references fetched into `Sources/Reference_papers/` via `sources-fetch.md`
+- [ ] `audit_references.py` run at end of Phase 3 and start of Phase 4; no BROKEN / ORPHANED entries
+- [ ] Deck built per `deck-build.md`; patient imaging stripped of DICOM metadata and cropped of identifiers
+- [ ] Visual QA per `visual-qa.md`; speaker notes per `speaker-notes.md` (do not pre-spoil pause-and-reveal slides)
+- [ ] Mock Q&A generated per Phase 6
+- [ ] Final `audit_references.py` run returns 0 issues
+- [ ] `safe-file-operations.md` applied before any rebuild or post-presentation update
+
+---
+
+*Case-discussion workflow — thin wrapper over the framework building blocks. De-identification is non-negotiable; verify at every level before sharing.*

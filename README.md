@@ -122,8 +122,8 @@ Every presentation Claude builds passes through these phases. Tools listed in th
 |---|---|---|---|
 | 1 | **Kickoff** | Claude asks: rotation, topic, audience, slide count, theme, weighting. Proposes outline structure based on topic type. | (none — interview only) |
 | 2 | **Research** | Claude reads your PDFs in `Sources/`, verifies PMIDs, builds master reference list, fills a sources-summary table at the bottom of the outline. | `sources-fetch` (acquire chapters/papers), `librarian` (organise PDFs), `references` (Vancouver + PMID verification) |
-| 3 | **Outline drafting** | Slide-by-slide outline with figure placeholders, `Ref:` lines, and an optional paper-summary card per landmark trial. You confirm before any deck-build starts. | `references`, `images` (figure-summary table), `paper-summary` (PICO cards on request), `clinical-depth`, `disease-comparison`, `local-guideline`, `evidence-grading` (content modules apply per slide as relevant) |
-| 4 | **Build deck** | Claude generates the PPTX from the approved outline. Asks about theme/template if not already saved in `theme/` or `templates/`. | `deck-build` (theme + layouts + python-pptx mechanics) |
+| 3 | **Outline drafting** | Slide-by-slide outline with figure placeholders, `Ref:` lines, and an optional paper-summary card per landmark trial. `reference-audit` runs automatically before transitioning to Phase 4 — blocks the transition if any orphaned / broken citations exist. You confirm before any deck-build starts. | `references`, `reference-audit` (`audit_references.py`), `images` (figure-summary table), `paper-summary` (PICO cards on request), `clinical-depth`, `disease-comparison`, `local-guideline`, `evidence-grading` (content modules apply per slide as relevant) |
+| 4 | **Build deck** | Claude generates the PPTX from the approved outline. Asks about theme/template if not already saved in `theme/` or `templates/`. Re-runs `reference-audit` as the first step — no broken refs propagate into slides. | `deck-build` (theme + layouts + python-pptx mechanics), `reference-audit` |
 | 5 | **Image sourcing** | **Default: Claude inserts labelled placeholder textboxes** for each figure. You insert real images yourself. Claude only auto-sources images if you explicitly ask. | `images` (placeholder format + license rules), `sources-fetch` (if downloading figures from PMC) |
 | 6 | **Visual QA** | Claude renders the deck to PDF, extracts PNG thumbnails, inspects for overflow / overlap / truncation / font-shrink / theme drift. | `visual-qa` |
 | 7 | **Speaker notes + Mock Q&A** *(optional)* | Speaker notes in the audience's language (with English medical terms preserved); 25–40 anticipated faculty questions with difficulty grades. | `speaker-notes`, `mock-qa` |
@@ -221,7 +221,7 @@ These two skills are installable by Cowork on first connect. They work both insi
 **Trigger from anywhere:**
 
 - *"Clean up the filenames in my library."*
-- *"Update library-index.md — I just dropped 5 new PDFs in D:\\MEDICINE\\TEXTBOOK."*
+- *"Update library-index.md — I just dropped 5 new PDFs in my library folder."*
 - *"List my textbooks."*
 - *"What's in my Sources/ folder for the Hyponatremia project?"*
 
@@ -301,7 +301,7 @@ If you installed via manual download, updating means: download the latest ZIP, t
 6. **Verify nothing personal is missing.** Open EXISTING in your file explorer and confirm:
    - Your topic folders (`Internal Medicine/`, `Rheumatology/`, etc.) are still there.
    - Your saved themes (`theme/your-theme.md`) and templates (`templates/your-template.pptx`) are still there.
-   - `framework/` has the new file count *(currently 17 files across 3 subfolders — count any new content modules listed in the updated CLAUDE.md)*.
+   - `framework/` has the expected file count — open the updated `CLAUDE.md` Section 1 (architecture diagram) and confirm every listed file is present in the folder.
 
 7. **Re-open Cowork on the updated workspace.** It should auto-load the new `CLAUDE.md`.
 
@@ -345,7 +345,7 @@ Codified in `framework/safe-file-operations.md`; background in `framework/retros
 | Slide language | English | Phase 1 kickoff, per project |
 | Speaker-note language | Audience language + English medical terms (Thai narrative for Thai audiences) | Phase 1 kickoff |
 | Theme | Academic-default Pantone palette; white background; Calibri font | `theme/your-theme.md` or `deck-build.md` Step 1 |
-| Body bullet size | 16–18 pt (deliberately larger than typical) | `deck-build.md` Step 3 |
+| Body bullet size | 18 pt with 16 pt floor (projection-ready; deliberately larger than typical PowerPoint defaults) | `deck-build.md` Step 3 |
 | Reference font size | 10 pt italic (intentionally small — long text, not for reading during the talk) | `deck-build.md` Step 3 |
 | Image policy | Placeholders by default; user inserts real images | `images.md` |
 | Source paraphrasing | Use exact wording from sources — no paraphrasing | `references.md` Phase 5 |
@@ -356,6 +356,4 @@ Codified in `framework/safe-file-operations.md`; background in `framework/retros
 
 ## License & contribution
 
-This framework is offered as-is for medical residents, fellows, and faculty preparing academic presentations. If you adapt it for your country or institution, you're welcome to share back your `local-guideline` variant or any new presentation types you add.
-
-The framework's design rationale and historical lessons are captured in `framework/retrospective.md` — read it once at the start of a new project, append to it after each new presentation.
+This framework is offered as-is for medical residents, fellows, and faculty preparing academic presentat

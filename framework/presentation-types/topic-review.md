@@ -28,6 +28,7 @@ Load these by `Read` when you reach the matching workflow phase:
 - For PPTX mechanics, theme, slide layouts → `framework/building-blocks/deck-build.md`
 - For auto-fetching textbook chapters, papers, and guideline PDFs into `Sources/` → `framework/building-blocks/sources-fetch.md`
 - For references and PMID verification → `framework/building-blocks/references.md`
+- For **automated reference reconciliation** (audit script) → `framework/building-blocks/reference-audit.md` — load and run at slide-removal events, Phase 3→4 transition, Phase 4 start, Phase 6 reconciliation
 - For open-access figure sourcing → `framework/building-blocks/images.md`
 - For speaker notes format → `framework/building-blocks/speaker-notes.md`
 - For visual QA → `framework/building-blocks/visual-qa.md`
@@ -70,7 +71,7 @@ Only after the folder exists (and the user has had a chance to drop source PDFs 
 2. **Slide count and duration?** Confirm both — they're not fixed.
 3. **Audience and language?** (resident year, narrative language, English medical terms preserved)
 4. **Primary sources?** (textbook + edition + chapter; guideline name + year; user-supplied PDFs in `Sources/`)
-5. **Existing PPTX template or colleague's deck to preserve?** This drives `deck-build.md` Step 1 (theme vs. template vs. from scratch).
+5. **Existing PPTX template or colleague's deck to preserve?** This drives `deck-build.md` Step 1 (theme vs. template vs. from scratch). **Always ask explicitly — don't assume a default.** Examples of what to look for: an institutional title slide / section divider style, a colleague's deck whose section dividers the user likes, a `Templates/` folder at the workspace root. If the user mentions liking the design of any prior presentation, treat that as a template lead — ask for the file before building anything.
 6. **Specific angles to emphasize?** (e.g., pathophysiology-heavy, treatment-heavy, local-context-heavy)
 
 **Topic type + section weighting.** After the questions, classify the topic into one of the six types in Phase 3 and propose the section weighting (Heavy / Standard / Light / Skip) explicitly. Get user approval before any research — the weighting drives Phase 2 research depth, Phase 3 slide allocation, and the master reference list density.
@@ -280,9 +281,40 @@ For any disease-syndrome slide, apply `clinical-depth.md` (bedside layer).
 
 For any slide that states a clinical recommendation from a named guideline, apply `evidence-grading.md` (grade + system + guideline year on the recommendation line; flag conflicts between societies or with the local guideline rather than picking one silently).
 
+**Section 3 (Heavy clinical) — apply the "recognition" frame.** For each organ-system slide in a Heavy clinical section, structure content around bedside recognition:
+
+1. **What the patient complains of** — symptoms in the patient's own words
+2. **What the examiner finds** — physical exam findings, including bedside tests (e.g., phenylephrine test for scleritis vs episcleritis)
+3. **What's specific to this disease vs non-specific** — for each finding, flag whether it points to the named disease or could be many things
+4. **How to distinguish from the closest mimic** — name the comparator; never make a "specific" claim without saying compared to what
+
+This frame is non-negotiable for the Heavy clinical section. A bullet list of organ-system findings without the patient/examiner perspective fails the audience's recognition need. See `clinical-depth.md` for the full bedside-layer pattern.
+
+**One slide per major organ system** when the section is Heavy — don't cram eye + skin + nerve + CNS + cardiac onto one consolidated slide. Each organ deserves its own slide with at least one image placeholder.
+
+**Slide-removal trigger** — if at any point during outline drafting the user asks to remove a slide, cut a section, or trim content:
+
+1. Note the cited refs on the to-be-removed slide(s)
+2. Edit the outline to remove the slide(s)
+3. Run `audit_references.py` (see `reference-audit.md`)
+4. Show user the newly-orphaned refs; ask to remove from master list (default yes)
+5. Apply confirmed removals to master list and sources summary
+
+Do NOT delete files in `Sources/` as part of this — only the master-list entry. Files persist by `safe-file-operations.md` discipline.
+
 ### Phase 4 — Build deck
 
 **Confirm the completed outline with the user before starting to build.** If the user has not approved the slide-by-slide outline from Phase 3, do not begin building.
+
+**Mandatory entry step — run the reference audit BEFORE any python-pptx work.** See `reference-audit.md`:
+
+```bash
+python3 framework/building-blocks/audit_references.py \
+    "{Department}/{Topic}/Documents/{Topic} outline.md" \
+    "{Department}/{Topic}/Sources/"
+```
+
+If the audit reports BROKEN citations or other issues, surface them and resolve before proceeding. Don't propagate broken refs into the deck.
 
 Build the deck from `{Topic} outline.md` per `deck-build.md`. The deck-build flow will ask about theme/template upfront (Step 1 of `deck-build.md`) if not already established in Phase 1.
 
@@ -579,4 +611,17 @@ The full safety discipline lives in `safe-file-operations.md`; read it before an
 ## Quick-start checklist
 
 - [ ] Decide rotation, topic, audience, slide count, duration, primary sources
-- [ ] Create folder structure (`Sources/`, `Document
+- [ ] Create folder structure (`Sources/`, `Documents/`, `Deck/`, `Build_archive/Backups/`, `Build_archive/Section_PPTXs/`, `Build_archive/Old_versions/`)
+- [ ] Classify topic type (Types 1–6) and propose section weighting; get user approval before research
+- [ ] Drop primary-source PDFs into `Sources/`; auto-fetch the rest via `sources-fetch.md`
+- [ ] Read source PDFs; verify every PMID via web search before adding to master reference list
+- [ ] Build outline with master reference list (top), slide-by-slide content between `▼`/`▲` markers, and `## Build aids — not for slides` (sources summary + figure summary) at the bottom
+- [ ] Run `audit_references.py` at end of Phase 3; resolve any BROKEN / ORPHANED entries before building
+- [ ] Confirm outline with user; confirm theme/template (Step 1 of `deck-build.md`)
+- [ ] Build deck per `deck-build.md`; visual QA per `visual-qa.md`
+- [ ] Speaker notes + mock Q&A per Phase 7 (optional)
+- [ ] Apply `safe-file-operations.md` before any rebuild or post-presentation update
+
+---
+
+*Topic-review workflow — thin wrapper over the framework building blocks. Always confirm outline structure and section weighting before research begins.*

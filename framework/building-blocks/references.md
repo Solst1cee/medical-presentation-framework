@@ -132,27 +132,38 @@ N. Author LM, Author NO. Chapter title. In: Editor LM, Editor NO, editors. Book 
 The visual styling (font size, colour, separator weight) lives in `deck-build.md` Step 3. The structural conventions specific to references:
 
 - **Position:** bottom of every content slide, above the footer.
-- **Content:** full Vancouver citation for each cited reference, with the reference number leading.
-- **Separator:** thin horizontal rule between body content and the reference block.
-- **Layout:** one reference per line, stacked.
-- **Maximum 4 references per slide.** If more is tempting, prefer 3 — slide density loses readability fast above 4.
+- **Format:** **full Vancouver citation with leading master-list number** — `{N}. {full Vancouver citation}`. The number lets the audience cross-reference to the deck-end reference slides; the full citation lets them act on it without flipping back.
+- **Layout:** one reference per line, stacked vertically. Sort by master-list number ascending.
+- **Textbox sizing:** **dynamic — height calculated from ref count + wrap estimate, anchored to slide bottom.** A slide with 1–2 refs gets a small ref block hugging the slide bottom; a slide with 6 refs gets a taller block that grows upward. This frees vertical space on slides with few refs so body content doesn't get crowded. Vertical anchor inside the textbox = bottom (so text sits flush with the bottom of the box).
+- **Maximum 3–4 references per slide.** If more is tempting, prefer 3 — slide density loses readability fast above 4. Trim by selecting the most-cited / most-quoted refs; refs already named in slide body text can be dropped from the bottom line.
 
-Example bottom-of-slide reference block (rendered styling per `deck-build.md`):
+Example bottom-of-slide reference block (stacked numbered full Vancouver, rendered styling per `deck-build.md`):
 
 ```
-1. AuthorA LM, AuthorB NO. Disease overview. In: Editor LM et al., editors. Standard Textbook. 21st ed. Publisher; 2024. p. 1015–25.
-14. AuthorC LM, AuthorD EF, AuthorE GH, AuthorF IJ. Pivotal RCT on therapy X. N Engl J Med. 2023;390(8):e3007–18.
+1. Langford CA, Fauci AS. The vasculitis syndromes. In: Harrison's Principles of Internal Medicine. 21st ed. McGraw-Hill; 2022. Ch. 363.
+15. Hoffman GS, et al. Wegener granulomatosis: an analysis of 158 patients. Ann Intern Med. 1992;116(6):488–98.
+23. Bossuyt X, et al. Revised 2017 international consensus on testing of ANCAs in GPA and MPA. Nat Rev Rheumatol. 2017;13(11):683–92.
 ```
+
+Anti-patterns:
+
+```
+Ref: 1, 15, 23            ❌ Number-only — forces the audience to flip to the reference slide to know what's cited.
+
+Hoffman 1992 · Bossuyt 2017 · Langford 2022   ❌ Compact-but-no-number — the audience can't cross-reference to the deck-end reference slide quickly.
+```
+
+The deck-end reference slides reproduce the full Vancouver-numbered list for archival completeness; the slide-bottom block is the actionable per-slide subset, with the same numbering scheme so they line up.
 
 ### Outline file rendering
 
-Each slide section in the outline ends with a `Ref:` line listing reference numbers only:
+Each slide section in the outline ends with a `Ref:` line listing reference numbers only (the audit script reads these to determine what's cited):
 
 ```
-**Ref:** 1, 5, 12, 14, 18
+**Ref:** 1, 15, 23
 ```
 
-The full citations live only in the master list at the top of the outline.
+When the deck is built, the build helper converts these numbers to full numbered Vancouver citations using a lookup table built from the master list. Full citations live only in the master list at the top of the outline; the slide build pulls them via the number index.
 
 ---
 
@@ -189,13 +200,22 @@ If a source quote is too long to fit at body-text size, **split it across two bu
 
 ## Phase 6 — Final reference reconciliation
 
-Before declaring the deck finalised:
+**Use the automated audit** rather than walking through manually. See `reference-audit.md` for the full workflow; the script lives at `framework/building-blocks/audit_references.py`.
 
-1. **Walk through every slide** and check that the `Ref:` line matches the actual content.
-2. **Walk through the master list** and confirm every reference number is used at least once.
-3. **Walk through the master list** and confirm no reference appears that isn't cited anywhere.
-4. Resolve any "Ref [N] not found" errors in the build script.
-5. **Cross-check the sources summary table (build aid)** against the master list — every cited reference should appear in the table; every table row should appear in the master list.
+```bash
+python3 framework/building-blocks/audit_references.py \
+    "{Department}/{Topic}/Documents/{Topic} outline.md" \
+    "{Department}/{Topic}/Sources/"
+```
+
+The audit cross-checks four things that previously required a manual walk-through:
+
+1. Every `Ref:` line citation has a master-list entry (no BROKEN cites).
+2. Every master-list entry is cited at least once (no ORPHANED entries).
+3. Sources summary table is in sync with the master list (no STALE rows).
+4. Files in `Sources/` match a master-list entry (no UNMATCHED files).
+
+Exit code 0 = clean; exit code 1 = issues to resolve before finalizing. Run this at every phase transition, not just at the end. See `reference-audit.md` for trigger details.
 
 ---
 

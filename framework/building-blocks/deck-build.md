@@ -118,13 +118,13 @@ TITLE_SUBTITLE    = 24   # title slide subtitle (italic)
 TITLE_FOOTER      = 15   # title slide presenter / date / institution
 SECTION_SIZE      = 46   # section divider title
 SECTION_SUBTITLE  = 20   # section divider subtitle (italic)
-HEADER_SIZE       = 24   # content-slide header bar (bold white)
-SUBTITLE_SIZE     = 16   # content-slide italic subtitle
-BODY_SIZE         = 17   # content-slide bullets (16–18 range)
-SUBSECTION_SIZE   = 18   # bold subsection labels
-TABLE_HEADER_SIZE = 15
-TABLE_BODY_SIZE   = 14   # 13–16 range
-QUADRANT_SIZE     = 14   # 4-quadrant bullets (13–15 range)
+HEADER_SIZE       = 26   # content-slide header bar (bold white) — projection-ready
+SUBTITLE_SIZE     = 16   # content-slide italic subtitle (16 floor)
+BODY_SIZE         = 18   # content-slide bullets — **projection floor; do not drop below 16**
+SUBSECTION_SIZE   = 19   # bold subsection labels
+TABLE_HEADER_SIZE = 18   # table header row
+TABLE_BODY_SIZE   = 16   # table body cells (14–16 range; 14 is the floor for dense tables)
+QUADRANT_SIZE     = 15   # 4-quadrant bullets (14–16 range)
 STAT_BIG_SIZE     = 40   # stat callout big numbers (34–50 range)
 STAT_CAPTION_SIZE = 13   # stat callout caption (12–13 range)
 PEARL_SIZE        = 16   # pearl box body (italic)
@@ -158,13 +158,13 @@ Past presentations used sizes that turned out to be too small to read from the b
 | Title slide footer (presenter/date) | **15 pt** | Two lines if needed |
 | Section divider title | **46 pt bold** | "SECTION N" line + topic line |
 | Section divider subtitle | **20 pt italic** | |
-| Content slide header | **24 pt bold white** | Inside the accent header bar |
+| Content slide header | **26 pt bold white** | Inside the accent header bar — projection-ready |
 | Content slide subtitle | **16 pt italic** | Optional |
-| Content slide body bullets | **16–18 pt** | 6–10 bullets per slide |
-| Content slide subsection labels | **18 pt bold** | In ACCENT_PRIMARY |
-| Table header row | **15 pt bold white** | On ACCENT_PRIMARY fill |
-| Table body rows | **13–16 pt** | Alternate white / faint tint |
-| 4-quadrant body bullets | **13–15 pt** | Higher density allowed |
+| Content slide body bullets | **18 pt (16 pt floor)** | 6–10 bullets per slide; do not drop below 16 |
+| Content slide subsection labels | **19 pt bold** | In ACCENT_PRIMARY |
+| Table header row | **18 pt bold white** | On ACCENT_PRIMARY fill |
+| Table body rows | **16 pt (14 pt floor for dense tables)** | Alternate white / faint tint |
+| 4-quadrant body bullets | **15 pt (14 pt floor)** | Higher density allowed |
 | Stat callout big number | **34–50 pt bold** | On a contrasting fill |
 | Stat callout caption | **12–13 pt italic** | Below the number |
 | Pearl box body | **16 pt italic** | Bold "Pearl:" prefix |
@@ -197,7 +197,7 @@ These nine patterns cover every kind of slide a topic review / journal club / ca
 |                                                           |
 |  Footer: institution / division        (15 pt gray-dark)  |
 |                                                           |
-|  Presenter: [name]    Date: [date]     (13 pt gray-med)   |
+|  Presenter: [name]    Date: [date]     (15 pt gray-med)   |
 +----------------------------------------------------------+
 ```
 
@@ -222,12 +222,12 @@ One section divider per major section. **5–7 sections** is a healthy upper bou
 ```
 +----------------------------------------------------------+
 | [ACCENT_SECONDARY header bar — full width, 0.85 in tall]  |
-| Slide title (24 pt bold white, left-aligned)              |
+| Slide title (26 pt bold white, left-aligned)              |
 +----------------------------------------------------------+
 | Optional italic subtitle (16 pt gray-med)                 |
 |                                                           |
-| Subsection label (18 pt bold, ACCENT_PRIMARY)             |
-| - bullet (16–18 pt, gray-dark)                            |
+| Subsection label (19 pt bold, ACCENT_PRIMARY)             |
+| - bullet (18 pt, gray-dark; 16 pt floor)                  |
 | - bullet                                                  |
 |                                                           |
 | Subsection label                                          |
@@ -247,11 +247,67 @@ One section divider per major section. **5–7 sections** is a healthy upper bou
 
 Tables built as native PPTX shapes (not text-frame "tables") render more cleanly:
 
-- Header row: **ACCENT_PRIMARY fill, white 15 pt bold**
+- Header row: **ACCENT_PRIMARY fill, white 18 pt bold**
 - Body rows alternate **white** and **light tint** of ACCENT_PRIMARY (use the colour at ~5% saturation, e.g. `#F5F7FB` for a navy palette)
 - First column **bold ACCENT_PRIMARY italic** when it's a category label
 - Other columns gray-dark, regular
 - Cell padding ~0.1 in left/right; vertical anchor middle
+
+**python-pptx gotcha — vertical anchor on table cells:**
+
+```python
+# WRONG — silently no-op. Writes <a:bodyPr anchor="ctr"/> into the text frame,
+# but PowerPoint reads cell vertical alignment from <a:tcPr anchor="ctr"/>.
+cell.text_frame.vertical_anchor = MSO_ANCHOR.MIDDLE
+
+# RIGHT — sets the cell's tcPr/@anchor attribute, which PowerPoint honors.
+cell.vertical_anchor = MSO_ANCHOR.MIDDLE
+```
+
+Apply `cell.vertical_anchor = MSO_ANCHOR.MIDDLE` to **every** cell (header + body) in the table-building helper. This is a recurring confusion because shape text frames DO honor `text_frame.vertical_anchor`; only table cells need the cell-level attribute.
+
+### Reference-line textbox — dynamic sizing anchored to slide bottom
+
+Don't use a fixed-height ref textbox. A 1-ref slide and a 6-ref slide need very different vertical space; a fixed-tall textbox wastes space on the former and crowds body content on every slide.
+
+Pattern: **calculate height from ref count + wrap estimate, then anchor to slide bottom.**
+
+```python
+def ref_line(slide, ref_nums, prefix=""):
+    sorted_refs = sorted(set(ref_nums))
+    lines = ([prefix] if prefix else []) + [CITES[n] for n in sorted_refs if n in CITES]
+
+    # At 9 pt italic Calibri across ~12.5" usable width, ~110 chars fit per line.
+    CHARS_PER_LINE = 110
+    LINE_H_IN = 0.18
+    SPACE_BETWEEN_PARAS_IN = 0.02
+
+    total_lines = 0
+    for text in lines:
+        wraps = max(1, -(-len(text) // CHARS_PER_LINE))  # ceil division
+        total_lines += wraps
+    h_in = total_lines * LINE_H_IN + max(0, len(lines) - 1) * SPACE_BETWEEN_PARAS_IN + 0.04
+    h_in = max(0.22, h_in)  # floor for single-line case
+
+    BOTTOM_MARGIN_IN = 0.08
+    ref_h = Inches(h_in)
+    ref_y = SLIDE_H - ref_h - Inches(BOTTOM_MARGIN_IN)
+
+    tb = slide.shapes.add_textbox(Inches(0.4), ref_y, SLIDE_W - Inches(0.8), ref_h)
+    tf = tb.text_frame
+    tf.margin_top = Emu(0); tf.margin_bottom = Emu(0)
+    tf.word_wrap = True
+    tf.vertical_anchor = MSO_ANCHOR.BOTTOM  # text flush with bottom of textbox
+
+    for i, text in enumerate(lines):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        if i > 0: p.space_before = Pt(1)
+        p.alignment = PP_ALIGN.LEFT
+        r = p.add_run()
+        set_run(r, text, size=9, italic=True, color=GRAY_MED)
+```
+
+The body of each slide's build function uses fixed y-positions for content as before — but doesn't need to reserve a fixed bottom margin for refs. The dynamic ref box only grows upward into the body area when there are many refs.
 
 ### Pattern 5 — 4-quadrant Diagnosis & Treatment (workhorse)
 
@@ -279,7 +335,7 @@ For any disease syndrome with substantial diagnostic and treatment content:
 +----------------------------------------------------------+
 ```
 
-Each quadrant ~6 in × 2.55 in. **13–15 pt bullets**. The Treatment quadrant uses the **secondary accent** for its header strip to visually separate it from the diagnostic quadrants.
+Each quadrant ~6 in × 2.55 in. **15 pt bullets (14 pt floor)**. The Treatment quadrant uses the **secondary accent** for its header strip to visually separate it from the diagnostic quadrants.
 
 ### Pattern 6 — Stat callouts
 
@@ -573,9 +629,9 @@ In every other case, prefer Scenario A's section-PPTX approach.
 |---|---|---|---|
 | Title | 44 pt | n/a | Uncluttered |
 | Section divider | 46 pt | n/a | Just title + subtitle |
-| Standard content | 16–18 pt | 6–10 bullets | Use bold subsections |
-| 4-quadrant dx/tx | 13–15 pt | 4–6 per quadrant | Higher density allowed |
-| Table | 13–16 pt | 4–7 rows | Header in ACCENT_PRIMARY |
+| Standard content | 18 pt (16 floor) | 6–10 bullets | Use bold subsections |
+| 4-quadrant dx/tx | 15 pt (14 floor) | 4–6 per quadrant | Higher density allowed |
+| Table | 16 pt (14 floor) | 4–7 rows | Header in ACCENT_PRIMARY |
 | Image | 15–16 pt | 4–6 bullets | Image ~5 in wide |
 | References | 10 pt | 12–14 entries per slide | Simple list |
 
@@ -616,5 +672,4 @@ When generating slides programmatically:
 - [ ] Image captions include paper-derived description + source attribution + license
 - [ ] Pearl boxes used sparingly (≤ 1 per slide)
 - [ ] No slide is more than ~90% full of text (leave breathing room)
-- [ ] Theme constants matched across all slides — no slide drifts to a different shade of the accent colours
-- [ ] White background (or the user's chosen background) consistent throughout
+- [ ] Theme constants matched across all slides — no slide drifts to a differen
