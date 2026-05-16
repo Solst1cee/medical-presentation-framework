@@ -1,6 +1,6 @@
 # CLAUDE.md — Medical Presentation Framework
 
-A modular framework for medical academic presentations: topic reviews, journal clubs, case discussions (with M&M and operative-technique slots reserved for later formats). One set of reusable building blocks — deck-build, sources-fetch, references, images, speaker-notes, visual-qa, mock-qa — that any presentation type can call.
+A modular framework for medical academic presentations: topic reviews, journal clubs, case discussions (with M&M and operative-technique slots reserved for later formats). One set of reusable building blocks — deck-build, sources-fetch, librarian, references, images, speaker-notes, visual-qa, mock-qa — that any presentation type can call.
 
 Originally authored by an internal-medicine resident in Thailand. The default conventions (English slides, Thai-narrative speaker notes with English medical terms, a home-institution theme palette, Thai NLEM/NHSO local-context content module) reflect that setting. If you're adopting the framework elsewhere, the conventions in Section 4 and the theme constants in `framework/building-blocks/deck-build.md` are designed to be the points you swap.
 
@@ -16,7 +16,7 @@ A small number of skills are also packaged as `.skill` bundles at the project ro
 
 ### What's bundled, what's not — and why
 
-- **Bundled** (`.skill` at project root): **sources-fetch** only. Useful standalone — adopters often want to fetch a chapter or paper into a folder ad-hoc, without first opening a presentation project. The skill is self-contained (no internal references to other framework files), so it triggers cleanly from anywhere on the machine once installed.
+- **Bundled** (`.skill` at project root): **sources-fetch** and **librarian**. Both are useful standalone — `sources-fetch` for ad-hoc chapter / paper / guideline acquisition; `librarian` for renaming PDFs and maintaining `library-index.md` outside any presentation workflow. Both are self-contained enough to trigger cleanly from anywhere on the machine once installed.
 - **Not bundled** (folder-only): **topic-review, journal-club, case-discussion**. These are *thin wrappers* that load building blocks via relative paths like `framework/building-blocks/deck-build.md`. Those paths only resolve when the working directory is the framework folder. Bundling them would force a choice between (a) shipping copies of every building block inside each `.skill` (defeating the layered architecture's update-once principle) or (b) shipping broken paths. Folder-only is the honest answer.
 
 ### Claude — on the first session in a new environment, do this check
@@ -42,6 +42,7 @@ PRESENTATION TYPES   framework/presentation-types/
 BUILDING BLOCKS   framework/building-blocks/
                        ├── deck-build.md      (theme + layouts + python-pptx + unpack/repack)
                        ├── sources-fetch.md   (browser download via VPN + local-library extraction → Sources/)
+                       ├── librarian.md       (rename PDFs, maintain library-index.md, classify whole vs partial)
                        ├── references.md      (Vancouver + PMID verification)
                        ├── images.md          (PMC open-access + license + caption)
                        ├── speaker-notes.md   (audience-language narrative + English medical terms)
@@ -136,6 +137,7 @@ The presentation-type files assume this structure. **At kickoff, the first thing
 | How do I build a topic review / journal club / case discussion? | `framework/presentation-types/{type}.md` |
 | How do I assemble a PPTX? Theme constants? | `framework/building-blocks/deck-build.md` |
 | How do I auto-fetch a textbook chapter or paper into `Sources/`? | `framework/building-blocks/sources-fetch.md` |
+| How do I rename PDFs / update `library-index.md` / classify a textbook? | `framework/building-blocks/librarian.md` |
 | How do I cite papers correctly? | `framework/building-blocks/references.md` |
 | How do I find open-access figures? | `framework/building-blocks/images.md` |
 | How do I write speaker notes? | `framework/building-blocks/speaker-notes.md` |

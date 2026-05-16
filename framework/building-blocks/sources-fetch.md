@@ -86,10 +86,19 @@ The `web_fetch` tool may work for fully open-access targets (PMC article landing
 1. **Identify the platform** from the source type (table below).
 2. **Navigate** to the search box of the right platform via Chrome MCP; search by title or DOI.
 3. **Open the article / chapter page** and locate the PDF download control.
-4. **Trigger the download** to the user's default download folder.
-5. **Move the file** into `{Project}/Sources/` and rename per the filename convention.
-6. **Append a row** to `Sources/_acquisition_log.md` (citation, source URL, access date).
-7. **Report back** at the end of the loop with one line per fetched source.
+4. **Trigger the download.** The browser saves to the user's default Downloads folder, not to `{Project}/Sources/`. That's expected — the move happens in the next step.
+5. **Move from Downloads to `{Project}/Sources/` — non-skippable.** The browser does not save directly to the project folder; without this move the file lives in the wrong place and `_acquisition_log.md` will reference a path that does not exist. After the move, verify: file present in `Sources/`, non-zero bytes, opens cleanly. If verification fails, do not append to the acquisition log — re-attempt the move or report a failure.
+6. **Hand the file to `librarian.md`** for naming. Pass the citation / title / author context; `librarian` renames per the canonical convention (textbook chapter / article / guideline patterns) and returns the canonical filename. Don't invent ad-hoc names — `librarian` owns this convention so all framework files agree on it.
+7. **Append a row** to `Sources/_acquisition_log.md` using the canonical filename returned by `librarian` (citation, source URL, access date).
+8. **Ask "save to library too?"** for textbook-chapter fetches via Method A. Once the project copy is safe in `Sources/`, prompt the user:
+
+   > *"You just downloaded {Book Ch N — Title} from {publisher}. Want to add it to your local library so a future fetch can use it offline?*
+   > *(a) Just this chapter — `librarian` will save a copy to the library root and append a `partial` chapter entry to `library-index.md`*
+   > *(b) The whole textbook PDF — if you have it on hand or can grab it now, `librarian` will add a `complete` entry*
+   > *(c) Nothing — the project `Sources/` copy is enough"*
+
+   On (a) or (b), call `librarian.md` to handle the file copy and index update. On (c), continue. Skip this prompt for one-off papers and guidelines that aren't part of a textbook — they rarely belong in the long-term library.
+9. **Report back** at the end of the loop with one line per fetched source: filename, source URL, library-status (added / not added).
 
 ### Platform crib sheet
 
@@ -105,30 +114,43 @@ The `web_fetch` tool may work for fully open-access targets (PMC article landing
 
 ### Filename convention
 
-Consistent names downstream make `references.md` Phase 2 reconciliation cleaner.
+The canonical naming conventions live in **`librarian.md`**. Sources-fetch delegates the rename in step 6 of the workflow above — don't duplicate the convention here. Brief reminder of the patterns:
 
 - **Textbook chapter:** `{Book short name} {Edition} Ch{N} {Chapter title}.pdf`
-  - `Harrisons IM 21e Ch121 Hyponatremia.pdf`
-  - `Brenner Rector 12e Ch16 Disorders of plasma sodium.pdf`
 - **Journal article:** `{First author} {Year} {Short title}.pdf`
-  - `Garrahy 2021 Hypertonic saline RCT.pdf`
-  - `Spasovski 2014 European hyponatremia guideline.pdf`
 - **Guideline document:** `{Society} {Year} {Topic}.pdf`
-  - `KDIGO 2024 Glomerular diseases.pdf`
 
-Avoid spaces in filenames if the project uses scripts that shell-pipe paths; otherwise spaces are fine.
+For full conventions, edge cases, and PDF-metadata-driven name inference, see `librarian.md`.
 
-### When access fails
+### When access fails — and the pause-and-resume pattern
+
+Some walls clear in <30 seconds if the user steps into the live browser tab and handles them manually. Others are hard failures. Treat them differently.
+
+#### Pause-and-resume (recoverable in-session)
+
+Chrome MCP keeps the browser tab open between operations, and the user is at their machine. When you hit a wall the user can clear quickly, **pause the automation and ask them to handle it in the live tab**, then resume:
+
+> *"I hit a [CAPTCHA / publisher account login / SSO redirect] on {platform} for {source}. The tab is open in your browser. Please complete it there, then tell me to continue."*
+
+After the user signals "continue," retry the download — the session cookie usually persists, so the second attempt succeeds. This pattern applies to:
+
+- **CAPTCHA challenges** (reCAPTCHA, hCaptcha, "verify you're human" puzzles)
+- **Publisher-level account login on top of campus IP.** Some publishers (Wiley, Elsevier on certain titles) require a one-time interactive login even when the user is already on the institutional network. The login persists for the session.
+- **SSO institutional login redirects** (Shibboleth, OpenAthens) — same pattern; user signs in once, automation resumes.
+
+Do not try to solve CAPTCHAs programmatically — it violates publisher ToS and is not reliable in any case.
+
+#### Hard failures (cannot be cleared in-session)
 
 | Failure | Recovery |
 |---|---|
-| Login wall appears | Stop the loop. Report the platform and the source. Ask the user to verify VPN / login status and resume. |
-| Paywall (no institutional access) | Report to user. Suggest alternatives: PMC version, preprint server (medRxiv, bioRxiv), interlibrary loan. Do not bypass paywalls. |
+| Paywall, no institutional access at all | Report to user. Suggest alternatives: PMC version, preprint server (medRxiv, bioRxiv), interlibrary loan. Do not bypass paywalls. |
 | Geo-restriction | Report. Cannot proceed without VPN to an authorised region. |
-| Anti-bot challenge (CAPTCHA) | Report. User has to complete the CAPTCHA and re-attempt. |
+| Persistent CAPTCHA after the user paused and tried | Stop the loop. Log as user-to-fetch. |
 | File downloads but is corrupt / 0-byte | Re-attempt once, then report. |
+| Repeated session expiry mid-batch | Stop the loop. Suggest the user re-authenticate fully and re-run the skill. |
 
-Don't retry a failed source more than once silently — failures usually indicate an access problem the user has to resolve.
+Don't retry a failed source more than once silently — failures usually indicate an access problem the user has to resolve. The pause pattern handles the easy cases; remaining failures need human attention out-of-band.
 
 ---
 
@@ -153,61 +175,19 @@ If the path isn't recorded yet, ask the user once and append it to `CLAUDE.md`. 
 
 ### `library-index.md` format
 
-Maintained by the user (with Claude's help on first scaffold). Lives at the library root. Format:
+The canonical format spec — including the **`Coverage`** field that distinguishes complete textbooks from partial chapter collections — lives in **`librarian.md`**. Method B reads the index for lookups; any *update* to the index goes through `librarian` so the spec stays single-source.
 
-````markdown
-# Medical Library Index
-
-**Library root:** C:\Users\{user}\Documents\Medical Library
-**Last updated:** 2026-05-15
-
----
-
-## Internal Medicine
-
-### Harrison's Principles of Internal Medicine — 21st edition (2022)
-- **Editors:** Loscalzo J, Fauci A, Kasper D, Hauser S, Longo D, Jameson JL.
-- **Publisher:** McGraw-Hill
-- **Layout:** single PDF with bookmarks
-- **Path:** `Internal Medicine/Harrisons IM 21e/Harrisons-IM-21e.pdf`
-- **TOC source:** PDF bookmarks (chapter-level)
-- **Notes:** ~5000 pages; chapter extraction by bookmark page range.
-
-### Goldman-Cecil Medicine — 26th edition (2020)
-- **Editors:** Goldman L, Schafer AI.
-- **Publisher:** Elsevier
-- **Layout:** folder of per-chapter PDFs
-- **Path:** `Internal Medicine/Goldman-Cecil 26e/`
-- **TOC source:** filenames match chapter numbers (e.g., `Ch_121_Hyponatremia.pdf`).
-
----
-
-## Nephrology
-
-### Brenner & Rector's The Kidney — 12th edition (2024)
-- **Editors:** Yu ASL, Chertow GM, Luyckx VA, Marsden PA, Skorecki K, Taal MW.
-- **Publisher:** Elsevier
-- **Layout:** single PDF with bookmarks
-- **Path:** `Nephrology/Brenner-Rector 12e/Brenner-Rector-12e.pdf`
-- **TOC source:** PDF bookmarks.
-````
-
-### Field definitions
-
-- **Editors / Publisher:** for citation construction without re-opening the PDF.
-- **Layout:** `single PDF with bookmarks` or `folder of per-chapter PDFs`. Determines extraction code path.
-- **Path:** relative to **Library root**.
-- **TOC source:** how Claude finds the chapter — `PDF bookmarks`, `filenames match chapter numbers`, or `separate TOC at {path}`.
+For a Method B lookup, the fields you need are: `Layout`, `Path`, `TOC source`, and `Coverage`. See `librarian.md` for the full schema, field definitions, and worked examples.
 
 ### Workflow per source
 
 1. **Read** `library-index.md`.
-2. **Match** the request (book + edition + chapter) to an index entry. Fuzzy match on book name + edition acceptable; **confirm with the user before extraction** if multiple candidates or unclear match.
+2. **Match** the request (book + edition + chapter) to an index entry. Fuzzy match on book name + edition acceptable; **confirm with the user before extraction** if multiple candidates or unclear match. Also check the entry's **`Coverage`** field — if it is `partial — chapters: ...` and the requested chapter is **not** in that list, treat this as a library miss and fall through to Method A.
 3. **Branch on layout:**
    - **Folder of per-chapter PDFs** → find the matching file by chapter number or title; `shutil.copy` to `{Project}/Sources/`.
    - **Single PDF with bookmarks** → use `pypdf` to walk the bookmark tree, find the target chapter's bookmark, compute its page range (start = bookmark page; end = next sibling bookmark's page − 1, or last page of book), extract pages, write a new PDF to `{Project}/Sources/`.
 4. **Never modify the source PDF.** Open in read-only mode. Write only to `Sources/`.
-5. **Append a row** to `Sources/_acquisition_log.md`.
+5. **Hand the extracted file to `librarian.md`** to apply the canonical filename (textbook chapter pattern), then append a row to `Sources/_acquisition_log.md` using the canonical filename, source noted as `"Local library extraction from {book}, p. {start}–{end}"`, and date.
 
 ### Bookmark-driven extraction (single-PDF case)
 
