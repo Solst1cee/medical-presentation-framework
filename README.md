@@ -20,6 +20,27 @@ It is **not** an autopilot. The framework prioritises clinical accuracy, **exact
 
 ---
 
+## Pick your path before installing
+
+The framework supports four user paths. They differ in setup complexity, capability, and whether you can use them from mobile. Pick the one that fits your work pattern before you install — the steps below assume a path.
+
+| Path | Where you run | Setup | Mobile? | Capability |
+|---|---|---|---|---|
+| **U1 — Cowork on PC** | Claude Cowork desktop | Easiest | No, desktop only | **Full framework** — outline, build, visual QA, all phases |
+| **U2 — Claude Code on PC** | Claude Code CLI or IDE plugin | Medium | No, desktop only | **Full framework** — same as U1 |
+| **U3 — Claude on web / iOS** | claude.ai/code in a browser or the Claude iOS app, connected to your fork | Medium (fork + GitHub setup) | Yes, any device | **Outline + references only** — cannot generate `.pptx`, render PDFs, or auto-fetch papers via Chrome MCP |
+| **U4 — Remote Control** | Always-on PC, controlled from iOS via Claude Code Remote Control | Hardest (U2 setup + Remote Control enable) | Yes, any device | **Full framework** — the work runs on your home PC; your phone is a remote keyboard |
+
+**Quick recommendations:**
+
+- **Only ever at your desk** → U1 (simplest) or U2 (more flexible if you like terminals or VS Code).
+- **Want to draft on the train, build at home** → U3 for outlining, then finish on U1 or U2 at your desk.
+- **Want full power from your phone** → U4. Requires keeping a PC on and connected, but it is the only mobile path that supports the full deck-build workflow.
+
+The install steps below cover U1 and U2 directly. U3 and U4 setup notes are in *Mobile and remote setup* later in this README.
+
+---
+
 ## Installation — 4 steps
 
 ### Step 1 — Install Claude Cowork
@@ -244,6 +265,35 @@ Both `theme/` and `templates/` are **gitignored** except their READMEs — your 
 ---
 
 ## Keeping the framework up to date
+
+The update steps differ per path. Pick the one matching the path you installed.
+
+### U1 — Cowork on PC
+
+1. `git pull` in the framework folder (or re-download the ZIP per *Option B* below).
+2. If `sources-fetch.skill` or `librarian.skill` changed in that pull, open Cowork's skill manager and reinstall the changed bundle(s).
+3. Restart Cowork so the registry picks up the new version.
+
+### U2 — Claude Code on PC
+
+1. `git pull` in the framework folder.
+2. If you installed `sources-fetch.skill` or `librarian.skill` to `~/.claude/skills/`, re-copy the changed bundle(s) from the freshly-pulled repo into your skills folder.
+3. No restart required — next session sees the new content.
+
+### U3 — Claude on web / iOS
+
+1. On GitHub, open your fork → click **Sync fork** → confirm.
+2. Next claude.ai/code or iOS session reads the updated framework.
+
+If you made local edits to framework files in your fork, syncing may produce merge conflicts — resolve on GitHub's web interface, or pull from upstream into a local clone if you have one.
+
+### U4 — Remote Control
+
+Same steps as U2, executed on your always-on PC. You can trigger the `git pull` and the skill re-copy via the Remote Control session from your iOS device — the commands run on the desktop where the session lives.
+
+---
+
+The two installation styles (clone vs ZIP) below back the steps above:
 
 You have two ways to update, matching the two ways you installed. **Git is much cleaner**; manual update is doable but requires care to avoid overwriting your own content.
 

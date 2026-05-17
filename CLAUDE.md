@@ -19,6 +19,12 @@ A small number of skills are also packaged as `.skill` bundles at the project ro
 - **Bundled** (`.skill` at project root): **sources-fetch** and **librarian**. Both are useful standalone — `sources-fetch` for ad-hoc chapter / paper / guideline acquisition; `librarian` for renaming PDFs and maintaining `library-index.md` outside any presentation workflow. Both are self-contained enough to trigger cleanly from anywhere on the machine once installed.
 - **Not bundled** (folder-only): **topic-review, journal-club, case-discussion**. These are *thin wrappers* that load building blocks via relative paths like `framework/building-blocks/deck-build.md`. Those paths only resolve when the working directory is the framework folder. Bundling them would force a choice between (a) shipping copies of every building block inside each `.skill` (defeating the layered architecture's update-once principle) or (b) shipping broken paths. Folder-only is the honest answer.
 
+### Where this framework runs
+
+The framework runs in **Claude Cowork (desktop)**, **Claude Code (desktop terminal or IDE plugin)**, and **Claude Code Remote Control** (iOS app driving a desktop session) — all with full capability.
+
+In **claude.ai/code on the web or the Claude iOS app** (cloud mode), the framework runs with **reduced capability**: outline drafting and the reference audit work, but deck generation does not (no python-pptx, no LibreOffice, no Chrome MCP for paper acquisition). If a user invokes a deck-build phase (Phase 4 onward) from cloud mode, surface this limitation immediately — do not attempt and fail opaquely. See `README.md` "Pick your path" for the full user-facing comparison.
+
 ### Claude — on the first session in a new environment, do this check
 
 1. Look at the current `available_skills` list (in the system reminder).
