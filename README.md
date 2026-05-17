@@ -203,10 +203,12 @@ These two skills are installable by Cowork on first connect. They work both insi
 
 **What it does:** Acquires textbook chapters, journal articles, or guideline PDFs and places them into a project's `Sources/` folder.
 
-**Two methods:**
+**A four-rung ladder, tried in order per source (stops at the first that works):**
 
-1. **Browser-driven download** via Chrome MCP on publisher sites (requires campus network or VPN access).
-2. **Local-library extraction** from your digital textbook collection (reads `library-index.md`, copies or extracts the requested chapter).
+1. **Method A — local-library extraction** from your digital textbook collection (reads `library-index.md`, copies or extracts the requested chapter; offline).
+2. **Method B — free open-access API resolver** (PMID/DOI/title → a legal open-access PDF via PMC / Unpaywall / Europe PMC; no browser, no VPN).
+3. **Method C — browser via Chrome MCP, no VPN** (free/open targets that still need a real browser).
+4. **Method D — browser via Chrome MCP, with optional demand-driven VPN auto-connect** (entitled publisher content; requires campus network or VPN access). See *Customising the framework → Optional VPN auto-connect*.
 
 **Trigger from anywhere:**
 
@@ -240,6 +242,19 @@ Once saved, just tell Claude *"Use the theme in theme/Academic-Navy.md"* during 
 Put your branded PPTX in `templates/`. Example: `templates/Institution-master.pptx`. Claude uses it as a base in unpack/repack XML build mode.
 
 Both `theme/` and `templates/` are **gitignored** except their READMEs — your files stay on your machine.
+
+### Faster, VPN-light paper fetching (the 4-rung ladder)
+
+`sources-fetch` walks four rungs per source and stops at the first that works: **A** local library → **B** free open-access API resolver → **C** browser without VPN → **D** browser with VPN. Most papers with a legal free copy (PMC, author manuscripts, repositories) are resolved at rung B by `resolve_oa.py` with no browser and no VPN — so the VPN is only ever reached for genuinely entitled content at rung D. Set a contact email in `CLAUDE.md §9` (required by Unpaywall; a throwaway address is fine) and rung B works with zero further setup.
+
+### Optional VPN auto-connect for paper downloads (Windows, opt-in)
+
+**Off by default.** When you enable it, `sources-fetch` brings your institutional VPN up *only* at rung D (entitled content), and releases it when the fetch is done — so you don't connect/disconnect by hand.
+
+- **Setup:** in `CLAUDE.md §8` set `Auto-connect: on`, your `vpncli.exe` path, and your VPN profile/host name. Built for Windows + Cisco Secure Client / AnyConnect (cert or saved creds, no MFA); an `openconnect` wrapper honouring the same verb contract works as a fallback if IT blocks `vpncli.exe`.
+- **Security:** no credentials live in the repo — only the executable path and the profile name. Auth stays in Cisco's saved profile / Windows credential store.
+- **Never breaks your own session:** disconnect is gated by a per-user ownership marker, so the framework only ever tears down a tunnel *it* opened — never one you opened yourself. An optional `SessionEnd` hook (snippet in `CLAUDE.md §8`, gitignored/per-machine) guarantees cleanup even if a session ends mid-fetch.
+- **Validation:** the tunnel logic can't be exercised from Claude Code on the web (no Windows / no `vpncli.exe`); validate on your own machine with `vpn-control.ps1 -Action status` and the checklist behaviour described in `CLAUDE.md §8`.
 
 ---
 
@@ -348,6 +363,8 @@ Codified in `framework/safe-file-operations.md`; background in `framework/retros
 | Body bullet size | 18 pt with 16 pt floor (projection-ready; deliberately larger than typical PowerPoint defaults) | `deck-build.md` Step 3 |
 | Reference font size | 10 pt italic (intentionally small — long text, not for reading during the talk) | `deck-build.md` Step 3 |
 | Image policy | Placeholders by default; user inserts real images | `images.md` |
+| Paper fetch ladder | A local library → B free OA API → C browser → D browser+VPN, per source | `sources-fetch.md`; email in `CLAUDE.md §9` |
+| VPN auto-connect | Off (opt-in; Windows + Cisco `vpncli.exe`; only at rung D) | `CLAUDE.md §8` + `vpn-control.ps1` |
 | Source paraphrasing | Use exact wording from sources — no paraphrasing | `references.md` Phase 5 |
 | Local context | Thailand-scoped (NHSO / RCPT / Thai formulary) | `local-guideline.md` |
 | Outline ↔ deck sync | Outline canonical until deck hand-editing begins; reconciliation is explicit, not automatic | `deck-build.md` Step 7 |

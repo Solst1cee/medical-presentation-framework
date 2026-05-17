@@ -246,7 +246,7 @@ Also classify the design (RCT / observational / SR-MA / diagnostic) so the match
 
 ### Phase 2 — Read the paper (30–60 min)
 
-**Before reading, ensure the working set is in `Sources/`.** A journal-club working set is usually: the paper PDF, its supplementary appendix, the trial protocol if available, the trial-registration record (screenshot or text export of the registry's outcome list), and 2–3 prior trials/guidelines cited in the background. Use `sources-fetch.md` to acquire anything not yet on hand — browser download via VPN handles publisher PDFs, supplementary appendices, and registry exports; PMC works for the prior background papers when they're open access.
+**Before reading, ensure the working set is in `Sources/`.** A journal-club working set is usually: the paper PDF, its supplementary appendix, the trial protocol if available, the trial-registration record (screenshot or text export of the registry's outcome list), and 2–3 prior trials/guidelines cited in the background. Use `sources-fetch.md` to acquire anything not yet on hand — its 4-rung ladder resolves open-access prior papers via the free API rung first (no browser/VPN), then falls through to browser, with optional auto-VPN only at the last rung for entitled publisher PDFs, supplementary appendices, and registry exports (see `sources-fetch.md` / `CLAUDE.md §8–9`).
 
 Read the actual PDF carefully — methods first, then results, then discussion last. Don't infer from the abstract or training knowledge. Walk through the matching study-design checklist above AND the red-flags checklist as you read. Note:
 

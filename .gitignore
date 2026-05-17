@@ -17,6 +17,12 @@ desktop.ini
 .vscode/
 .idea/
 
+# Opt-in VPN auto-connect safety-net hook (sources-fetch Method D). The hook
+# is Windows/Cisco-specific and per-machine; the user creates it on opt-in
+# from the snippet in CLAUDE.md section 8. A tracked hook would error on every
+# non-Windows adopter's session end, so it stays untracked.
+.claude/settings.json
+
 # Python build artefacts (in case scripts get added later)
 __pycache__/
 *.pyc

@@ -41,7 +41,7 @@ PRESENTATION TYPES   framework/presentation-types/
     ↑ thin wrappers; reference building blocks by Read path
 BUILDING BLOCKS   framework/building-blocks/
                        ├── deck-build.md         (theme + layouts + python-pptx + unpack/repack)
-                       ├── sources-fetch.md      (browser download via VPN + local-library extraction → Sources/)
+                       ├── sources-fetch.md      (4-rung ladder: local library → free OA API → browser → browser+optional auto-VPN → Sources/)
                        ├── librarian.md          (rename PDFs, maintain library-index.md, classify whole vs partial)
                        ├── references.md         (Vancouver + PMID verification)
                        ├── reference-audit.md +  (automated orphan/broken-citation check;
@@ -138,7 +138,9 @@ The presentation-type files assume this structure. **At kickoff, the first thing
 | What's the rationale behind the conventions? | `framework/retrospective.md` |
 | How do I build a topic review / journal club / case discussion? | `framework/presentation-types/{type}.md` |
 | How do I assemble a PPTX? Theme constants? | `framework/building-blocks/deck-build.md` |
-| How do I auto-fetch a textbook chapter or paper into `Sources/`? | `framework/building-blocks/sources-fetch.md` |
+| How do I auto-fetch a textbook chapter or paper into `Sources/`? | `framework/building-blocks/sources-fetch.md` (4-rung ladder) |
+| How do I resolve a PMID/DOI to a free open-access PDF (no browser/VPN)? | `framework/building-blocks/resolve_oa.py` (sources-fetch Method B); config in §9 |
+| How do I auto-connect a VPN only when fetching papers needs it? | §8 below + `framework/building-blocks/vpn-control.ps1` (sources-fetch Method D) |
 | How do I rename PDFs / update `library-index.md` / classify a textbook? | `framework/building-blocks/librarian.md` |
 | How do I cite papers correctly? | `framework/building-blocks/references.md` |
 | How do I check for orphaned / broken citations automatically? | `framework/building-blocks/reference-audit.md` (uses `audit_references.py`) |
@@ -155,11 +157,50 @@ The presentation-type files assume this structure. **At kickoff, the first thing
 
 ---
 
-## 7. Library configuration (sources-fetch Method B)
+## 7. Library configuration (sources-fetch Method A)
 
 For local-library extraction (textbook chapters from a digital collection on your own machine):
 
 - **Library root:** *(set to your local path, e.g., `D:\MEDICINE\TEXTBOOK` on Windows or `~/Medical Library/` on macOS)*
 - **Index file:** `library-index.md` at the library root
 
-`sources-fetch.md` reads the index from this location on every Method B fetch. Set the library root to wherever you keep your digital textbook collection on this machine, then create `library-index.md` listing each book's filename and chapters. Update
+`sources-fetch.md` reads the index from this location on every Method A fetch. Set the library root to wherever you keep your digital textbook collection on this machine, then create `library-index.md` listing each book's filename and chapters. Update the index via `librarian.md` whenever you add or remove books.
+
+---
+
+## 8. VPN configuration (sources-fetch Method D) — opt-in, default OFF
+
+Off by default. The framework does **not** touch any VPN unless you explicitly turn this on. Other adopters use different VPN clients (or none), so this stays opt-in and is never a tracked always-on hook.
+
+- **Auto-connect:** off            *(set to `on` to enable demand-driven connect/disconnect)*
+- **VPN client:** Cisco Secure Client / AnyConnect (`vpncli.exe`)
+- **vpncli.exe path:** *(e.g. `C:\Program Files (x86)\Cisco\Cisco Secure Client\vpncli.exe` — legacy AnyConnect uses `...\Cisco AnyConnect Secure Mobility Client\vpncli.exe`. If unset, `vpn-control.ps1` probes both; set explicitly if probing fails.)*
+- **VPN profile / host name:** *(the connection name as it appears in the Cisco client, e.g. `vpn.university.edu` — name only)*
+- **Fallback client (if IT blocks vpncli.exe):** *(optional path to an `openconnect` wrapper exposing the same `status|connect|disconnect` verbs and exit-code contract)*
+
+**Security model:** no credentials are stored here or anywhere in the repo — only the executable path and the profile *name*. Authentication uses Cisco's own saved profile / Windows credential store (cert or saved creds, no MFA prompt). Connect is scoped to **Method D only** and only after a real access wall; the lower rungs (A local, B API, C free browser) never touch the VPN. Disconnect is ownership-gated by a per-user marker file in `%TEMP%` — the framework never tears down a tunnel you opened yourself. If auto-connect is off or fails, sources-fetch falls back to asking you manually.
+
+Mechanics live in `framework/building-blocks/vpn-control.ps1` (`status` / `connect` / `disconnect`).
+
+**Optional safety-net hook (you create this on opt-in).** So a tunnel we opened is always released even if a session ends mid-fetch, create `.claude/settings.json` (it is gitignored — per-machine, not shipped) with:
+
+```json
+{ "hooks": { "SessionEnd": [ { "hooks": [ {
+  "type": "command", "shell": "powershell",
+  "command": "powershell -ExecutionPolicy Bypass -File framework\\building-blocks\\vpn-control.ps1 -Action disconnect",
+  "timeout": 60, "async": true,
+  "statusMessage": "Releasing framework-owned VPN tunnel (if any)..." } ] } ] } }
+```
+
+This is a marker-gated no-op unless `vpn-control.ps1 connect` left a tunnel up; it can never drop a tunnel you opened. (Only `SessionEnd` — not `Stop`, which fires every turn and would tear the tunnel down mid-fetch.)
+
+---
+
+## 9. API resolver configuration (sources-fetch Method B)
+
+Used by `resolve_oa.py` to turn a PMID/DOI/title into a *legal* open-access PDF with no browser and no VPN.
+
+- **Contact email:** *(e.g. `you@example.org` — required by Unpaywall, requested by NCBI for politeness. A role or throwaway address is fine. Note: if you commit `CLAUDE.md`, this email lands in the repo; keep it generic or set it locally only.)*
+- **NCBI API key:** set via the `NCBI_API_KEY` environment variable **only — never in the repo** (it merely raises the rate limit and is not required).
+
+If no email is configured the resolver still runs the Europe PMC / PMC PMID path, but Unpaywall (DOI-keyed) is skipped and those sources fall through to Method C/D. The resolver emits only openly-licensed / author-deposited URLs — it never returns a paywalled link.
