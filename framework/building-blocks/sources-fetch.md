@@ -340,6 +340,13 @@ If Step A returned **2** (pre-existing tunnel) or the manual fallback was used, 
 
 ## Common to all rungs
 
+### Environment — which rungs run where
+
+The ladder degrades by environment (see `CLAUDE.md` "Where this framework runs"):
+
+- **Desktop (U1 Cowork / U2 Claude Code / U4 Remote Control):** all four rungs available.
+- **Cloud (U3 — claude.ai/code web or Claude iOS):** only **Method B** (the OA API resolver) runs — pure HTTP, no browser, no VPN, so it works subject to the environment's network policy. **Methods A, C, D do not run in cloud:** A needs the local library filesystem; C needs Chrome MCP; D needs Chrome MCP *and* desktop PowerShell for VPN auto-connect. In cloud mode, if a source misses Method A's preconditions or falls past Method B, do **not** attempt C/D — log it as user-to-fetch and tell the user it needs a desktop session (U1/U2/U4). Surface this immediately rather than failing opaquely.
+
 ### Destination
 
 All fetched files land in `{Project}/Sources/`. Originals are never modified — Method A opens library files read-only; Method B downloads only to the project's `Sources/`; Methods C/D move the browser download into `Sources/`.

@@ -23,7 +23,7 @@ A small number of skills are also packaged as `.skill` bundles at the project ro
 
 The framework runs in **Claude Cowork (desktop)**, **Claude Code (desktop terminal or IDE plugin)**, and **Claude Code Remote Control** (iOS app driving a desktop session) — all with full capability.
 
-In **claude.ai/code on the web or the Claude iOS app** (cloud mode), the framework runs with **reduced capability**: outline drafting and the reference audit work, but deck generation does not (no python-pptx, no LibreOffice, no Chrome MCP for paper acquisition). If a user invokes a deck-build phase (Phase 4 onward) from cloud mode, surface this limitation immediately — do not attempt and fail opaquely. See `README.md` "Pick your path" for the full user-facing comparison.
+In **claude.ai/code on the web or the Claude iOS app** (cloud mode), the framework runs with **reduced capability**: outline drafting, the reference audit, and the sources-fetch OA API resolver (Method B — pure HTTP, no browser/VPN, network-policy permitting) work, but deck generation does not (no python-pptx, no LibreOffice), and the local-library / browser / VPN fetch rungs (sources-fetch Methods A/C/D, including VPN auto-connect) cannot run (no local library filesystem, no Chrome MCP, no desktop PowerShell). If a user invokes a deck-build phase (Phase 4 onward) — or a fetch that falls past Method B — from cloud mode, surface this limitation immediately: do not attempt and fail opaquely. See `README.md` "Pick your path" for the full user-facing comparison.
 
 ### Claude — on the first session in a new environment, do this check
 

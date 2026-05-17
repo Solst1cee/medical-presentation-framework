@@ -28,7 +28,7 @@ The framework supports four user paths. They differ in setup complexity, capabil
 |---|---|---|---|---|
 | **U1 — Cowork on PC** | Claude Cowork desktop | Easiest | No, desktop only | **Full framework** — outline, build, visual QA, all phases |
 | **U2 — Claude Code on PC** | Claude Code CLI or IDE plugin | Medium | No, desktop only | **Full framework** — same as U1 |
-| **U3 — Claude on web / iOS** | claude.ai/code in a browser or the Claude iOS app, connected to your fork | Medium (fork + GitHub setup) | Yes, any device | **Outline + references only** — cannot generate `.pptx`, render PDFs, or auto-fetch papers via Chrome MCP |
+| **U3 — Claude on web / iOS** | claude.ai/code in a browser or the Claude iOS app, connected to your fork | Medium (fork + GitHub setup) | Yes, any device | **Outline, references + OA paper fetch** — the open-access API resolver works (network-policy permitting); cannot generate `.pptx`, render PDFs, or browser/VPN-fetch paywalled papers or local-library chapters |
 | **U4 — Remote Control** | Always-on PC, controlled from iOS via Claude Code Remote Control | Hardest (U2 setup + Remote Control enable) | Yes, any device | **Full framework** — the work runs on your home PC; your phone is a remote keyboard |
 
 **Quick recommendations:**
