@@ -51,8 +51,12 @@ templates/*
 # matching the *_personal pattern.
 *_personal.md
 
-# MAINTAINER.md is the maintainer's private dev guide — not part of the
-# public framework. Stays on the maintainer's machine only. Its presence
-# at the workspace root is also the signal that switches Claude into
-# maintainer mode (see AGENTS.md "For maintainers" block).
+# MAINTAINER.md is the maintainer's personal-overlay scratchpad — not part
+# of the public framework. Canonical maintainer guidance lives in
+# docs/maintainer/ (tracked). MAINTAINER.md's presence at the workspace
+# root is also the signal that switches Claude into maintainer mode
+# (see AGENTS.md "For maintainers" block).
 MAINTAINER.md
+
+# Claude Code local state (chats, settings, session data)
+.claude/

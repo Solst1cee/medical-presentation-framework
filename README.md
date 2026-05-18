@@ -118,6 +118,9 @@ medical-presentation-framework/                  ← Cowork workspace; point Cow
 │   ├── content-modules/                           (optional content — clinical-depth, paper-summary, …)
 │   └── presentation-types/                        (entry points — topic-review, journal-club, case-discussion)
 │
+├── docs/                                         ← documentation for contributors / maintainers
+│   └── maintainer/                                (writing-style, safe-editing, user-context cheatsheet, roadmap)
+│
 ├── theme/                                        ← put your saved theme palettes here (gitignored except README)
 ├── templates/                                    ← put your institutional PPTX templates here (gitignored except README)
 │

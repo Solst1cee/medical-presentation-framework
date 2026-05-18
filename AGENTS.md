@@ -166,15 +166,23 @@ For local-library extraction (textbook chapters from a digital collection on you
 
 ## For maintainers
 
-If `MAINTAINER.md` is present at the workspace root, this is the framework's
-**source repo** (not an installed copy). Read `MAINTAINER.md` for editor-side
-context — your dev workflow, the user-context cheatsheet, and the parked-ideas
-roadmap.
+If you are editing the framework's own files (rather than using the framework
+to build a presentation), this is the framework's source repo. Read
+[`docs/maintainer/README.md`](docs/maintainer/README.md) first for editor-side
+guidance — writing style, safe-editing discipline, user-context cheatsheet,
+and triage tips. See [`docs/maintainer/architecture.md`](docs/maintainer/architecture.md)
+for deeper architectural notes, and
+[`docs/maintainer/roadmap.md`](docs/maintainer/roadmap.md) for parked ideas.
 
-In a maintainer session, treat the sections above as **reference material**
-describing what the framework does for end users — don't auto-trigger end-user
-workflows like topic-review, journal-club, or case-discussion unless the user
-explicitly asks. The maintainer's task is editing framework files, not using
-the framework to build a presentation.
+If a local-only `MAINTAINER.md` file is also present at the workspace root,
+read that too — it is the maintainer's personal-overlay file for notes that
+have not yet been published. Its presence is also the signal that this
+workspace is the maintainer's actual machine (not a fresh test-clone).
+
+In a maintainer session, treat the sections above (and the rest of this file)
+as **reference material** describing what the framework does for end users —
+don't auto-trigger end-user workflows like topic-review, journal-club, or
+case-discussion unless the user explicitly asks. The maintainer's task is
+editing framework files, not using the framework to build a presentation.
 
 ---
