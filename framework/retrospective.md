@@ -1,6 +1,6 @@
 ---
 name: retrospective
-description: Rolling log of presentations built with this framework — what worked, what got codified, project backstory behind the rules in safe-file-operations.md and the content modules. Read once at the start of a new project; appended to after each new presentation. Not intended to auto-trigger; loaded by reference from CLAUDE.md and other framework files.
+description: Rolling log of presentations built with this framework — what worked, what got codified, project backstory behind the rules in safe-file-operations.md and the content modules. Read once at the start of a new project; appended to after each new presentation. Not intended to auto-trigger; loaded by reference from AGENTS.md and other framework files.
 ---
 
 # Retrospective — Medical Presentation Framework
@@ -84,7 +84,7 @@ This was a process failure, not a content failure. The three rules broken:
 #### What worked — keep doing
 
 1. **Phase-by-phase check-ins** — kickoff → research → outline → build → QA. The user could course-correct between phases instead of waiting until the end to flag issues.
-2. **Library + sources-fetch workflow** — the user's library root (configured in `CLAUDE.md` Section 7) with `library-index.md` made Firestein/Harrison extraction fast once the library entry was added. The librarian skill handled renaming + index updates cleanly when the user dropped `nrrheum.2017.140.pdf` (Bossuyt 2017).
+2. **Library + sources-fetch workflow** — the user's library root (configured in `AGENTS.md` Section 7) with `library-index.md` made Firestein/Harrison extraction fast once the library entry was added. The librarian skill handled renaming + index updates cleanly when the user dropped `nrrheum.2017.140.pdf` (Bossuyt 2017).
 3. **Outline as source of truth with boundary markers** — `Documents/{Topic} outline.md` with `▼ SLIDE DECK CONTENT — STARTS BELOW ▼` / `▲ END OF SLIDE DECK CONTENT ▲` markers made it possible to rebuild the deck three times without re-doing the research or losing references.
 4. **PDF render + thumbnail extraction for visual QA** — `soffice → pdftoppm → JPEG` caught font-size and layout issues immediately after every build.
 5. **Subagent for citation verification** — research subagent verifying 30+ PMIDs in its own context kept the main conversation lean. (Failed for Chrome MCP fetches, but worked well for PubMed verification.)

@@ -44,7 +44,7 @@ When loaded by `sources-fetch.md` (not a direct trigger), the entry point is the
 
 | Scope | Folder | Index file | Purpose |
 |---|---|---|---|
-| **Library root** | e.g., `D:\MEDICINE\TEXTBOOK` (recorded in `CLAUDE.md` Section 7 / library configuration) | `library-index.md` at the library root | Long-term reference collection across all projects |
+| **Library root** | e.g., `D:\MEDICINE\TEXTBOOK` (recorded in `AGENTS.md` Section 7 / library configuration) | `library-index.md` at the library root | Long-term reference collection across all projects |
 | **Project Sources/** | `{Project}/Sources/` for a specific presentation | `_acquisition_log.md` in the same folder (managed by `sources-fetch.md`) | Per-project working set |
 
 Same naming conventions and same rename mechanics apply to both. The difference is only which index file gets updated. When invoked with `/librarian update` and no folder argument, the default scope is the library root. When invoked from `sources-fetch.md` after a project fetch, the scope is that project's `Sources/`.

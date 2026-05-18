@@ -84,7 +84,7 @@ If you don't have git installed, or you'd rather not use a terminal:
 
 ### Step 3 — Point Claude Cowork at the folder
 
-In Cowork, create a new project and select the cloned folder as the workspace root. Cowork will detect `CLAUDE.md` at the root and treat it as the framework's main instruction file.
+In Cowork, create a new project and select the cloned folder as the workspace root. Cowork will detect `CLAUDE.md` at the root and follow its pointer to `AGENTS.md`, where the framework's instructions live. (Cowork-only auto-loads `CLAUDE.md`; other agentic coding tools read `AGENTS.md` directly.)
 
 You should also see `.skill` bundles at the root (`sources-fetch.skill`, `librarian.skill`). When Cowork prompts to install them, accept — they enable ad-hoc paper acquisition and library management outside of a presentation workflow.
 
@@ -93,7 +93,7 @@ You should also see `.skill` bundles at the root (`sources-fetch.skill`, `librar
 Ask Claude something simple like *"What presentation types does this framework support?"*. You should get an answer that mentions **topic review**, **journal club**, and **case discussion** — that confirms Cowork found and read `CLAUDE.md`.
 
 If Claude doesn't recognise the framework, double-check that:
-- Cowork is pointed at the folder containing `CLAUDE.md` (not its parent or a subfolder).
+- Cowork is pointed at the folder containing `CLAUDE.md` and `AGENTS.md` (not its parent or a subfolder).
 - You restarted Cowork after first connecting the workspace.
 
 ---
@@ -105,7 +105,8 @@ The cloned folder *is* the workspace. Topic folders you create later will live a
 ```
 medical-presentation-framework/                  ← Cowork workspace; point Cowork here
 │
-├── CLAUDE.md                                     ← Cowork auto-reads this first
+├── AGENTS.md                                     ← canonical framework instructions (tool-agnostic — used by Codex, Aider, etc.)
+├── CLAUDE.md                                     ← thin Claude-specific pointer; Cowork auto-reads this first
 ├── README.md                                     ← this file
 ├── sources-fetch.skill                           ← Cowork installs this on first run
 ├── librarian.skill                               ← Cowork installs this too
@@ -317,7 +318,7 @@ This force-syncs all framework files to match the latest version on GitHub.
 
 **What this discards:**
 
-- Any modifications you accidentally made to framework files (e.g., if you or Claude touched `CLAUDE.md` or files inside `framework/` during a session).
+- Any modifications you accidentally made to framework files (e.g., if you or Claude touched `AGENTS.md`, `CLAUDE.md`, or files inside `framework/` during a session).
 
 If you have intentional local edits to framework files that you want to keep, use `git stash` before resetting (advanced workflow; see [git documentation](https://git-scm.com/docs/git-stash)).
 
@@ -334,6 +335,7 @@ If you installed via manual download, updating means: download the latest ZIP, t
 3. **Delete the old `framework/` subfolder inside EXISTING.** This is the most important single step. Why: a manual file-by-file copy can leave behind old framework files that were renamed or deleted in the update. Deleting the whole `framework/` folder ensures no orphan files remain. **Do not delete EXISTING itself** — only its `framework/` subfolder.
 
 4. **Copy from NEW into EXISTING**, overwriting where files exist:
+   - `AGENTS.md`
    - `CLAUDE.md`
    - `README.md`
    - `.gitignore` *(skip this if you've customised it)*
@@ -351,9 +353,9 @@ If you installed via manual download, updating means: download the latest ZIP, t
 6. **Verify nothing personal is missing.** Open EXISTING in your file explorer and confirm:
    - Your topic folders (`Internal Medicine/`, `Rheumatology/`, etc.) are still there.
    - Your saved themes (`theme/your-theme.md`) and templates (`templates/your-template.pptx`) are still there.
-   - `framework/` has the expected file count — open the updated `CLAUDE.md` Section 1 (architecture diagram) and confirm every listed file is present in the folder.
+   - `framework/` has the expected file count — open the updated `AGENTS.md` Section 1 (architecture diagram) and confirm every listed file is present in the folder.
 
-7. **Re-open Cowork on the updated workspace.** It should auto-load the new `CLAUDE.md`.
+7. **Re-open Cowork on the updated workspace.** It should auto-load the new `CLAUDE.md` (which then pulls `AGENTS.md`).
 
 **Concerns to watch for with manual update:**
 

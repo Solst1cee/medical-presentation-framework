@@ -79,7 +79,7 @@ Backups belong in a dedicated subfolder so they don't clutter the live working d
 {Project}/Build_archive/Backups/
 ```
 
-This sits alongside `Section_PPTXs/` and `Old_versions/` inside `Build_archive/` (see folder structure in `CLAUDE.md` Section 5). Keeping safety backups in their own folder makes it obvious which files are active deliverables (`Deck/`) versus safety copies (`Build_archive/Backups/`).
+This sits alongside `Section_PPTXs/` and `Old_versions/` inside `Build_archive/` (see folder structure in `AGENTS.md` Section 5). Keeping safety backups in their own folder makes it obvious which files are active deliverables (`Deck/`) versus safety copies (`Build_archive/Backups/`).
 
 If a project doesn't yet have `Build_archive/Backups/`, create it before making the first backup. Don't drop backups next to the live file at the project root or inside `Deck/` — they look like working files there and risk being opened by mistake.
 

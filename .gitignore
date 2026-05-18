@@ -51,9 +51,8 @@ templates/*
 # matching the *_personal pattern.
 *_personal.md
 
-# Local-only maintainer files — not part of the public framework.
-# AGENTS.md is a stub pointing at CLAUDE.md for non-Cowork agents;
-# MAINTAINER.md is the maintainer's private dev guide. Both stay on the
-# maintainer's machine only.
-AGENTS.md
+# MAINTAINER.md is the maintainer's private dev guide — not part of the
+# public framework. Stays on the maintainer's machine only. Its presence
+# at the workspace root is also the signal that switches Claude into
+# maintainer mode (see AGENTS.md "For maintainers" block).
 MAINTAINER.md

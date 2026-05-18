@@ -545,7 +545,7 @@ The skeleton below demonstrates how the metadata header, master reference list, 
 
 ## Folder structure
 
-Set up before Phase 2 (also documented in `CLAUDE.md` Section 5):
+Set up before Phase 2 (also documented in `AGENTS.md` Section 5):
 
 ```
 {Department}/                            # e.g., Internal Medicine, Rheumatology

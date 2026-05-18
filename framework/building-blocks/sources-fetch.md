@@ -163,7 +163,7 @@ The skill expects a maintained index file at the user's library root. Two cases:
 - **Index exists** — read it and proceed.
 - **Index doesn't exist** — offer to scaffold one (one-time setup, see below).
 
-The library root path is recorded in the project's `CLAUDE.md` under a small `## Library configuration` section the first time the skill is used:
+The library root path is recorded in the project's `AGENTS.md` under a small `## Library configuration` section the first time the skill is used:
 
 ```markdown
 ## Library configuration (sources-fetch Method B)
@@ -171,7 +171,7 @@ The library root path is recorded in the project's `CLAUDE.md` under a small `##
 - **Index file:** `library-index.md` at the library root
 ```
 
-If the path isn't recorded yet, ask the user once and append it to `CLAUDE.md`. Subsequent sessions read it from there.
+If the path isn't recorded yet, ask the user once and append it to `AGENTS.md`. Subsequent sessions read it from there.
 
 ### `library-index.md` format
 
